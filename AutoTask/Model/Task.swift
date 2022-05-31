@@ -77,5 +77,10 @@ extension TaskSubEntry {
             type = Int32(newValue.rawValue)
         }
     }
+    
+    var bulletListEntries: [BulletListEntry] {
+        get { Array(bulletListEntries_ as? Set<BulletListEntry> ?? []) }
+        set { bulletListEntries_ = Set(newValue) as NSSet }
+    }
 }
 

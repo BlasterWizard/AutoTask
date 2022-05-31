@@ -17,6 +17,7 @@ struct TaskSubEntryView: View {
     init(taskSubEntry: TaskSubEntry) {
         _taskSubEntry = ObservedObject(wrappedValue: taskSubEntry)
         _textContent = State(wrappedValue: taskSubEntry.text ?? "")
+        UITextView.appearance().backgroundColor = .clear
     }
 
     var body: some View {
@@ -25,17 +26,23 @@ struct TaskSubEntryView: View {
             Spacer()
             if taskSubEntry.typeStatus == .BulletList {
                 VStack {
-                    BulletListEntry()
-                    .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
+                    ForEach(taskSubEntry.bulletListEntries.sorted(by: { $0.order < $1.order }), id: \.self) { bulletListEntry in
+                        BulletListEntryView(taskSubEntry: taskSubEntry, bulletListEntry: bulletListEntry, order: Int(bulletListEntry.order))
+                    }
                 }
                
             } else {
-                TextField("Notes", text: $textContent)
-                    .onChange(of: textContent) {newValue in
-                        //save to coreData
-                        taskSubEntry.text = newValue
-                        try? context.save()
-                    }
+                ZStack {
+                    TextEditor(text: $textContent)
+                        .onChange(of: textContent) {newValue in
+                            //save to coreData
+                            taskSubEntry.text = newValue
+                            try? context.save()
+                        }
+                        .background(.ultraThinMaterial)
+                    Text(textContent).opacity(0).padding(.all, 8)
+                }
+                
             }
             editButton
         }
@@ -49,10 +56,23 @@ struct TaskSubEntryView: View {
     
     var editButton: some View {
         Menu {
+            changeToBulletListButton
+            changeToTextEditorButton
+            deleteTaskSubEntryButton
+        } label: {
+            Image(systemName: "ellipsis")
+                .foregroundColor(.secondary)
+        }
+    }
+    
+    var changeToBulletListButton: some View {
+        Group {
             if taskSubEntry.typeStatus != .BulletList {
                 Button(action: {
                     withAnimation {
                         taskSubEntry.typeStatus = .BulletList
+                        let newBulletListEntry = BulletListEntry(context: context)
+                        taskSubEntry.addToBulletListEntries_(newBulletListEntry)
                         try? context.save()
                     }
                 }) {
@@ -62,17 +82,12 @@ struct TaskSubEntryView: View {
 
                     }
                 }
-                Button(action: {
-                    taskSubEntry.task?.removeFromSubEntries_(taskSubEntry)
-                    try? context.save()
-                }) {
-                    HStack {
-                        Text("Delete")
-                        Image(systemName: "trash")
-                    }
-                }
             }
-            
+        }
+    }
+    
+    var changeToTextEditorButton: some View {
+        Group {
             if taskSubEntry.typeStatus != .Text {
                 Button(action: {
                     taskSubEntry.typeStatus = .Text
@@ -84,26 +99,18 @@ struct TaskSubEntryView: View {
                     }
                 }
             }
-        } label: {
-            Image(systemName: "ellipsis")
-                .foregroundColor(.secondary)
         }
     }
-}
-
-struct BulletListEntry: View {
-    @State private var text = ""
     
-    var body: some View {
-        HStack {
-            Circle()
-                .strokeBorder(Color.black, lineWidth: 2)
-                .frame(width: 20, height: 20)
-            TextField("", text: $text)
-                .onSubmit {
-                    //create new sub bullet entry
-                }
-            Spacer()
+    var deleteTaskSubEntryButton: some View {
+        Button(role: .destructive, action: {
+            taskSubEntry.task?.removeFromSubEntries_(taskSubEntry)
+            try? context.save()
+        }) {
+            HStack {
+                Text("Delete")
+                Image(systemName: "trash")
+            }
         }
     }
 }
@@ -111,12 +118,21 @@ struct BulletListEntry: View {
 struct TaskSubEntry_Previews: PreviewProvider {
     static var previews: some View {
         let context = PersistenceController.preview.container.viewContext
+            
         let newTaskSubEntry = TaskSubEntry(context: context)
         newTaskSubEntry.order = 0
         newTaskSubEntry.typeStatus = .Text
         newTaskSubEntry.text = "Hello!"
         
-        return TaskSubEntryView(taskSubEntry: newTaskSubEntry)
+        let newBulletListTaskSubEntry = TaskSubEntry(context: context)
+        newTaskSubEntry.typeStatus = .BulletList
+        let newBulletListEntry = BulletListEntry(context: context)
+        newTaskSubEntry.addToBulletListEntries_(newBulletListEntry)
+        
+        return Group {
+            TaskSubEntryView(taskSubEntry: newTaskSubEntry)
+            TaskSubEntryView(taskSubEntry: newBulletListTaskSubEntry)
+        }
             .environment(\.managedObjectContext, context)
             .padding()
             .previewLayout(.sizeThatFits)

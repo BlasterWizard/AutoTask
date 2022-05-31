@@ -9,6 +9,7 @@ import SwiftUI
 
 @main
 struct AutoTaskApp: App {
+    @StateObject var settingsVM = SettingsViewModel()
     let persistenceController = PersistenceController.shared
 
     var body: some Scene {
@@ -16,6 +17,7 @@ struct AutoTaskApp: App {
             TabView {
                 TasksView()
                     .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                    .environmentObject(settingsVM)
                     .tabItem {
                         Image(systemName: "checklist")
                         Text("Tasks")
@@ -25,7 +27,9 @@ struct AutoTaskApp: App {
                         Image(systemName: "gearshape.fill")
                         Text("Settings")
                     }
+                    .environmentObject(settingsVM)
             }
+            
            
         }
     }

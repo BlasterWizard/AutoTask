@@ -10,6 +10,7 @@ import CoreData
 
 
 struct TaskEntryView: View {
+    @EnvironmentObject var settingsVM: SettingsViewModel
     @Environment(\.managedObjectContext) var context
     @Environment(\.colorScheme) private var colorScheme
     
@@ -22,7 +23,7 @@ struct TaskEntryView: View {
             collapsedTaskView
             
             if isTaskExpanded {
-                ForEach(task.subEntries, id: \.self) { taskSubEntry in
+                ForEach(task.subEntries.sorted(by: { $0.order < $1.order }), id: \.self) { taskSubEntry in
                     TaskSubEntryView(taskSubEntry: taskSubEntry)
                 }
                 expandedTaskView
@@ -40,7 +41,9 @@ struct TaskEntryView: View {
             HStack {
                 Text(task.title ?? "")
                 Spacer()
-                TaskActionDisplayIcons(task: task)
+                if settingsVM.settings.showTaskActionDisplayIcons {
+                    TaskActionDisplayIcons(task: task)
+                }
             }
             .contentShape(Rectangle())
             .onTapGesture {
@@ -83,8 +86,8 @@ struct TaskEntryView: View {
     var addSubEntryButton: some View {
         Button(action: {
             let newTaskSubEntry = TaskSubEntry(context: context)
-            newTaskSubEntry.timestamp = Date()
             newTaskSubEntry.typeStatus = .Text
+            newTaskSubEntry.order = Int32(task.subEntries.count)
             task.addToSubEntries_(newTaskSubEntry)
             
             do {
@@ -151,6 +154,7 @@ struct TaskView_Previews: PreviewProvider {
                 .environment(\.managedObjectContext, context)
                 .padding()
                 .previewLayout(.sizeThatFits)
+                .environmentObject(SettingsViewModel())
             TaskActionNode(task: task, taskAction: taskAction)
                 .padding()
                 .previewLayout(.sizeThatFits)

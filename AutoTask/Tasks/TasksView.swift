@@ -40,7 +40,7 @@ struct TasksView: View {
                                     .buttonStyle(PlainButtonStyle())
                             }
                             .onDelete(perform: deleteTasks)
-
+//                            .onMove(perform: move)
                         }
                     } else {
                         Spacer()
@@ -113,6 +113,10 @@ struct TasksView: View {
             }
         }
     }
+    
+//    private func move(from source: IndexSet, to destination: Int) {
+//        Task.filterTasks(for: tasks, with: showCompletedStatus).move(fromOffsets: source, toOffset: destination)
+//    }
 }
 
 struct NewTaskView: View {
@@ -154,5 +158,6 @@ struct NewTaskView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         TasksView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+            .environmentObject(SettingsViewModel())
     }
 }

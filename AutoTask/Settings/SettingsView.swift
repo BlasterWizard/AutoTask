@@ -8,10 +8,12 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @EnvironmentObject var settingsVM: SettingsViewModel
+    
     var body: some View {
         NavigationView {
             List {
-                NavigationLink(destination: Text("Tasks")) {
+                NavigationLink(destination: SettingsTasksView(settingsVM: settingsVM)) {
                     HStack {
                         RoundedRectangle(cornerRadius: 6)
                             .fill(.green)
@@ -27,6 +29,28 @@ struct SettingsView: View {
             .navigationTitle("Settings")
             .listStyle(InsetGroupedListStyle())
         }
+    }
+}
+
+struct SettingsTasksView: View {
+    @ObservedObject var settingsVM: SettingsViewModel
+    
+    @State private var showTaskActionsIcons = true
+    
+    init(settingsVM: SettingsViewModel) {
+        _settingsVM = ObservedObject(wrappedValue: settingsVM)
+        _showTaskActionsIcons = State(wrappedValue: settingsVM.settings.showTaskActionDisplayIcons)
+    }
+    var body: some View {
+        List {
+            Toggle("Show Task Actions Icons", isOn: $showTaskActionsIcons)
+            .onChange(of: showTaskActionsIcons) { value in
+                //save changes to showTasksActionsIcons to UserDefaults
+                settingsVM.updateShowTaskActionDisplayIcons(to: value)
+            }
+        }
+        .navigationTitle("Tasks")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
