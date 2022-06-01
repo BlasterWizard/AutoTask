@@ -11,7 +11,7 @@
         <attribute name="isCompleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="taskActionsCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="title" optional="YES" attributeType="String"/>
+        <attribute name="title_" optional="YES" attributeType="String"/>
         <relationship name="subEntries_" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TaskSubEntry" inverseName="task" inverseEntity="TaskSubEntry"/>
         <relationship name="taskActions_" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TaskAction" inverseName="task" inverseEntity="TaskAction"/>
     </entity>
@@ -29,9 +29,9 @@
         <relationship name="task" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Task" inverseName="subEntries_" inverseEntity="Task"/>
     </entity>
     <elements>
-        <element name="Task" positionX="202.5386352539062" positionY="-77.98114013671872" width="128" height="148"/>
+        <element name="BulletListEntry" positionX="542.68994140625" positionY="223.5123291015625" width="128" height="103"/>
+        <element name="Task" positionX="202.5386352539062" positionY="-77.98114013671872" width="128" height="134"/>
         <element name="TaskAction" positionX="171" positionY="234" width="128" height="103"/>
         <element name="TaskSubEntry" positionX="357.4639892578125" positionY="157.2654113769532" width="128" height="118"/>
-        <element name="BulletListEntry" positionX="542.68994140625" positionY="223.5123291015625" width="128" height="103"/>
     </elements>
 </model>

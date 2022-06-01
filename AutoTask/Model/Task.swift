@@ -11,6 +11,11 @@ import SwiftUI
 
 //MARK: - Task
 extension Task {
+    var title: String {
+        get { title_ ?? ""}
+        set { title_ = newValue }
+    }
+    
     var content: String {
         get { content_ ?? "" }
         set { content_ = newValue }
@@ -26,7 +31,7 @@ extension Task {
         set { subEntries_ = Set(newValue) as NSSet }
     }
     
-    static func filterTasks(for tasks: FetchedResults<Task>, with filterStatus: CompletedTaskStatus) -> [Task] {
+    static func filterTasks(for tasks: [Task], with filterStatus: CompletedTaskStatus) -> [Task] {
         if filterStatus == .Completed {
             return tasks.filter { $0.isCompleted == true}
         }

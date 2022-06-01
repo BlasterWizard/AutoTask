@@ -18,6 +18,9 @@
 		E897AC89283F2EB20070EF9C /* TaskActionsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E897AC88283F2EB20070EF9C /* TaskActionsSheet.swift */; };
 		E897AC8B284016E00070EF9C /* TaskSubEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E897AC8A284016E00070EF9C /* TaskSubEntryView.swift */; };
 		E8BF1E262845975200F38917 /* BulletListEntryTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8BF1E252845975200F38917 /* BulletListEntryTextField.swift */; };
+		E8BF1E282846F33000F38917 /* TaskEntryTitleTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8BF1E272846F33000F38917 /* TaskEntryTitleTextField.swift */; };
+		E8E328BF28470F520040602E /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E328BE28470F520040602E /* NotificationManager.swift */; };
+		E8E328C1284735D30040602E /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E328C0284735D30040602E /* Extensions.swift */; };
 		E8F3CD05284146CD009E4644 /* TaskActionNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F3CD04284146CD009E4644 /* TaskActionNode.swift */; };
 		E8F3CD082841F024009E4644 /* TaskActionsSheetNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F3CD072841F024009E4644 /* TaskActionsSheetNode.swift */; };
 		E8F3CD0D2841FACB009E4644 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F3CD0C2841FACB009E4644 /* SettingsView.swift */; };
@@ -39,6 +42,9 @@
 		E897AC88283F2EB20070EF9C /* TaskActionsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskActionsSheet.swift; sourceTree = "<group>"; };
 		E897AC8A284016E00070EF9C /* TaskSubEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSubEntryView.swift; sourceTree = "<group>"; };
 		E8BF1E252845975200F38917 /* BulletListEntryTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulletListEntryTextField.swift; sourceTree = "<group>"; };
+		E8BF1E272846F33000F38917 /* TaskEntryTitleTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskEntryTitleTextField.swift; sourceTree = "<group>"; };
+		E8E328BE28470F520040602E /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		E8E328C0284735D30040602E /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		E8F3CD04284146CD009E4644 /* TaskActionNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskActionNode.swift; sourceTree = "<group>"; };
 		E8F3CD072841F024009E4644 /* TaskActionsSheetNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskActionsSheetNode.swift; sourceTree = "<group>"; };
 		E8F3CD0C2841FACB009E4644 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -85,6 +91,7 @@
 				E897AC75283EF8940070EF9C /* Assets.xcassets */,
 				E897AC7C283EF8940070EF9C /* AutoTask.xcdatamodeld */,
 				E897AC77283EF8940070EF9C /* Preview Content */,
+				E8E328C0284735D30040602E /* Extensions.swift */,
 			);
 			path = AutoTask;
 			sourceTree = "<group>";
@@ -101,6 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				E8BF1E252845975200F38917 /* BulletListEntryTextField.swift */,
+				E8BF1E272846F33000F38917 /* TaskEntryTitleTextField.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -111,6 +119,7 @@
 				E897AC7A283EF8940070EF9C /* Persistence.swift */,
 				E897AC86283F0A370070EF9C /* Task.swift */,
 				E8F3CD1028429BBB009E4644 /* SettingsViewModel.swift */,
+				E8E328BE28470F520040602E /* NotificationManager.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -217,6 +226,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				E897AC7B283EF8940070EF9C /* Persistence.swift in Sources */,
+				E8E328C1284735D30040602E /* Extensions.swift in Sources */,
+				E8E328BF28470F520040602E /* NotificationManager.swift in Sources */,
+				E8BF1E282846F33000F38917 /* TaskEntryTitleTextField.swift in Sources */,
 				E8F3CD13284585A2009E4644 /* BulletListEntryView.swift in Sources */,
 				E8F3CD05284146CD009E4644 /* TaskActionNode.swift in Sources */,
 				E8F3CD0F28420247009E4644 /* TaskActionDisplayIcon.swift in Sources */,

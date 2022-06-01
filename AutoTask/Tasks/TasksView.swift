@@ -19,7 +19,8 @@ struct TasksView: View {
     
     @State private var tempNewTask = false
     @State private var showCompletedStatus: CompletedTaskStatus = .Available
-
+    @State private var searchText = ""
+    
     var body: some View {
         NavigationView {
             VStack {
@@ -33,8 +34,8 @@ struct TasksView: View {
                                     .listRowSeparator(.hidden)
                                     .buttonStyle(PlainButtonStyle())
                             }
-                        
-                            ForEach(Task.filterTasks(for: tasks, with: showCompletedStatus), id: \.timestamp) { task in
+
+                            ForEach(Task.filterTasks(for: searchResults, with: showCompletedStatus), id: \.timestamp) { task in
                                 TaskEntryView(task: task)
                                     .listRowSeparator(.hidden)
                                     .buttonStyle(PlainButtonStyle())
@@ -42,12 +43,12 @@ struct TasksView: View {
                             .onDelete(perform: deleteTasks)
 //                            .onMove(perform: move)
                         }
+                        .searchable(text: $searchText)
                     } else {
                         Spacer()
                         Text("No Tasks Available")
                         Spacer()
                     }
-                    
                 }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
@@ -75,8 +76,8 @@ struct TasksView: View {
     
     var taskStatusPicker: some View {
         Picker("Completed Status", selection: $showCompletedStatus) {
-            Text("Available:" +   " \(Task.filterTasks(for: tasks, with: .Available).count)").tag(CompletedTaskStatus.Available)
-            Text("Logbook:" +   " \(Task.filterTasks(for: tasks, with: .Completed).count)").tag(CompletedTaskStatus.Completed)
+            Text("Available:" +   " \(Task.filterTasks(for: tasks.compactMap{$0 as Task}, with: .Available).count)").tag(CompletedTaskStatus.Available)
+            Text("Logbook:" +   " \(Task.filterTasks(for: tasks.compactMap{$0 as Task}, with: .Completed).count)").tag(CompletedTaskStatus.Completed)
         }
         .pickerStyle(.segmented)
         .padding()
@@ -117,6 +118,16 @@ struct TasksView: View {
 //    private func move(from source: IndexSet, to destination: Int) {
 //        Task.filterTasks(for: tasks, with: showCompletedStatus).move(fromOffsets: source, toOffset: destination)
 //    }
+    
+    var searchResults: [Task] {
+        let taskArray = tasks.compactMap { $0 as Task}
+     
+        if searchText.isEmpty {
+            return taskArray
+        }
+        
+        return taskArray.filter { $0.title.contains(searchText) }
+    }
 }
 
 struct NewTaskView: View {
@@ -161,3 +172,4 @@ struct ContentView_Previews: PreviewProvider {
             .environmentObject(SettingsViewModel())
     }
 }
+

@@ -39,7 +39,17 @@ struct TaskEntryView: View {
         HStack {
             checkbox
             HStack {
-                Text(task.title ?? "")
+                TaskEntryTitleTextField(text: $task.title, isEditable: $isTaskExpanded, task: task)
+//                    .onTapGesture {
+//                        if isTaskExpanded {
+//                            //edit title
+//                            print("hello")
+//                        } else  {
+//                            withAnimation(.easeOut) {
+//                                isTaskExpanded.toggle()
+//                            }
+//                        }
+//                    }
                 Spacer()
                 if settingsVM.settings.showTaskActionDisplayIcons {
                     TaskActionDisplayIcons(task: task)

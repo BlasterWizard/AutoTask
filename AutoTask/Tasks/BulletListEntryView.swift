@@ -29,7 +29,6 @@ struct BulletListEntryView: View {
     
     var body: some View {
         HStack {
-            Text("\(bulletListEntry.order)")
             Button(action: {
                 isCompleted.toggle()
                 bulletListEntry.isCompleted = isCompleted
