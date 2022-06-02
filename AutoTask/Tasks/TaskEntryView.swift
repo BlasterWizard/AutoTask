@@ -17,6 +17,7 @@ struct TaskEntryView: View {
     @ObservedObject var task: Task
     @State private var isTaskExpanded = false
     @State private var showTaskActionsCM = false
+    @State private var showTagsView = false
     
     var body: some View {
         VStack {
@@ -33,23 +34,16 @@ struct TaskEntryView: View {
         .background(.thinMaterial)
         .cornerRadius(10)
         .deleteDisabled(isTaskExpanded)
+        .sheet(isPresented: $showTagsView) {
+            TagsView(task: task)
+        }
     }
 
     var collapsedTaskView: some View {
         HStack {
             checkbox
             HStack {
-                TaskEntryTitleTextField(text: $task.title, isEditable: $isTaskExpanded, task: task)
-//                    .onTapGesture {
-//                        if isTaskExpanded {
-//                            //edit title
-//                            print("hello")
-//                        } else  {
-//                            withAnimation(.easeOut) {
-//                                isTaskExpanded.toggle()
-//                            }
-//                        }
-//                    }
+                EditableTextField(text: $task.title, isEditable: $isTaskExpanded, task: task)
                 Spacer()
                 if settingsVM.settings.showTaskActionDisplayIcons {
                     TaskActionDisplayIcons(task: task)
@@ -121,29 +115,62 @@ struct TaskEntryView: View {
             ForEach(task.taskActions.sorted(by: { $0.order < $1.order } ), id: \.self) { taskAction in
                 TaskActionNode(task: task, taskAction: taskAction)
             }
-            addTaskActionsButton
+            taskTagsView
+            HStack {
+                Spacer()
+                Button(action: {
+                    //Add tag to task - > bring up sheet
+                    showTagsView.toggle()
+                }) {
+                   Image(systemName: "tag")
+                }
+                addTaskActionsButton
+            }
+            .padding(EdgeInsets(top: 10, leading: 0, bottom: 0, trailing: 0))
+        }
+    }
+    
+    var taskTagsView: some View {
+        HStack {
+            ForEach(task.tags.sorted(by: { $0.name < $1.name}), id: \.self) { tag in
+                TagNode(tag: tag)
+            }
+            Spacer()
         }
     }
     
     var addTaskActionsButton: some View {
-        HStack {
-            Spacer()
-            Button(action: {
-                showTaskActionsCM.toggle()
-            }) {
-               Text("Add Task Action")
-                    .foregroundColor(.white)
-                    .bold()
-            }
-            .padding(5)
-            .background(.green)
-            .cornerRadius(5.0)
-            .sheet(isPresented: $showTaskActionsCM) {
-                TaskActionsSheet(task: task)
-            }
-            Spacer()
+        Button(action: {
+            showTaskActionsCM.toggle()
+        }) {
+           Text("Add Task Action")
+                .foregroundColor(.white)
+                .bold()
         }
-        .padding(2)
+        .padding(5)
+        .background(.green)
+        .cornerRadius(5.0)
+        .sheet(isPresented: $showTaskActionsCM) {
+            TaskActionsSheet(task: task)
+        }
+    }
+}
+
+//MARK: - TagNode
+struct TagNode: View {
+    @ObservedObject var tag: Tag
+    
+    var body: some View {
+        Text(tag.name)
+            .padding(EdgeInsets(top: TagNodeUIConstants.topBottomPadding, leading: TagNodeUIConstants.leftRightPadding, bottom: TagNodeUIConstants.topBottomPadding, trailing: TagNodeUIConstants.leftRightPadding))
+            .background(.thinMaterial)
+            .cornerRadius(TagNodeUIConstants.cornerRadius)
+    }
+    
+    struct TagNodeUIConstants {
+        static var topBottomPadding: CGFloat = 5
+        static var leftRightPadding: CGFloat = 10
+        static var cornerRadius: CGFloat = 20
     }
 }
 
@@ -159,6 +186,9 @@ struct TaskView_Previews: PreviewProvider {
         let taskAction = TaskAction(context: context)
         taskAction.actionType = .Reminder
         
+        let tag = Tag(context: context)
+        tag.name = "School"
+        
         return Group {
             TaskEntryView(task: task)
                 .environment(\.managedObjectContext, context)
@@ -166,6 +196,9 @@ struct TaskView_Previews: PreviewProvider {
                 .previewLayout(.sizeThatFits)
                 .environmentObject(SettingsViewModel())
             TaskActionNode(task: task, taskAction: taskAction)
+                .padding()
+                .previewLayout(.sizeThatFits)
+            TagNode(tag: tag)
                 .padding()
                 .previewLayout(.sizeThatFits)
         }

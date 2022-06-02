@@ -18,6 +18,11 @@ struct PersistenceController {
             newTask.title = "Task \(index)"
             newTask.timestamp = Date()
         }
+        
+        for index in 0..<5 {
+            let newTag = Tag(context: viewContext)
+            newTag.name = "Tag \(index)"
+        }
         do {
             try viewContext.save()
         } catch {

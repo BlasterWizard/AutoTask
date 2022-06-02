@@ -31,6 +31,11 @@ extension Task {
         set { subEntries_ = Set(newValue) as NSSet }
     }
     
+    var tags: [Tag] {
+        get { Array(tags_ as? Set<Tag> ?? []) }
+        set { tags_ = Set(newValue) as NSSet }
+    }
+    
     static func filterTasks(for tasks: [Task], with filterStatus: CompletedTaskStatus) -> [Task] {
         if filterStatus == .Completed {
             return tasks.filter { $0.isCompleted == true}
@@ -86,6 +91,19 @@ extension TaskSubEntry {
     var bulletListEntries: [BulletListEntry] {
         get { Array(bulletListEntries_ as? Set<BulletListEntry> ?? []) }
         set { bulletListEntries_ = Set(newValue) as NSSet }
+    }
+}
+
+//MARK: - Tag
+
+extension Tag {
+    var name: String {
+        get { name_ ?? "" }
+        set { name_ = newValue }
+    }
+    
+    static var placeholder: Tag {
+        Tag()
     }
 }
 

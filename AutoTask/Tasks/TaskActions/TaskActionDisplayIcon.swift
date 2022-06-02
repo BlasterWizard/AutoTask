@@ -14,7 +14,9 @@ struct TaskActionDisplayIcons: View {
         HStack {
             //Reminders
             ForEach([TaskType.Reminder, TaskType.Deadline], id: \.self) { taskTypeEnum in
-                TaskActionDisplayIcon(task: task, taskType: taskTypeEnum)
+                if task.taskActions.filter { $0.actionType == taskTypeEnum }.count > 0 {
+                    TaskActionDisplayIcon(task: task, taskType: taskTypeEnum)
+                }
             }
         }
         .font(.system(size: 20))

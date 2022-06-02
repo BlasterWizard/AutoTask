@@ -77,7 +77,6 @@ struct TaskActionNode: View {
         Menu {
             Button(action: {
                 task.removeFromTaskActions_(taskAction)
-                task.taskActionsCount -= 1
                 try? context.save()
             }) {
                 HStack {

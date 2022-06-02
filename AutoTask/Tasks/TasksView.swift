@@ -30,7 +30,13 @@ struct TasksView: View {
                     if tasks.count > 0 || tempNewTask{
                         List {
                             if tempNewTask {
-                                NewTaskView(showTempNewTask: $tempNewTask)
+                                NewEntryPlaceholderView(showTempNewEntry: $tempNewTask, placeholderText: "New Task Name") { newEntryName in
+                                    let newTask = Task(context: viewContext)
+                                    newTask.timestamp = Date()
+                                    newTask.title = newEntryName
+                                    try? viewContext.save()
+                                    tempNewTask = false 
+                                }
                                     .listRowSeparator(.hidden)
                                     .buttonStyle(PlainButtonStyle())
                             }
@@ -42,6 +48,7 @@ struct TasksView: View {
                             }
                             .onDelete(perform: deleteTasks)
 //                            .onMove(perform: move)
+                            
                         }
                         .searchable(text: $searchText)
                     } else {
@@ -60,7 +67,7 @@ struct TasksView: View {
                         if showCompletedStatus == .Available {
                             Button(action: {
                                 withAnimation(.easeInOut(duration: 0.5)) {
-                                    tempNewTask.toggle()
+                                    tempNewTask = true
                                 }}) {
                                 Label("Add Task", systemImage: "plus")
                             }
@@ -87,7 +94,6 @@ struct TasksView: View {
         withAnimation {
             let newTask = Task(context: viewContext)
             newTask.timestamp = Date()
-            newTask.taskActionsCount = 0
             
             do {
                 try viewContext.save()
@@ -118,6 +124,7 @@ struct TasksView: View {
 //    private func move(from source: IndexSet, to destination: Int) {
 //        Task.filterTasks(for: tasks, with: showCompletedStatus).move(fromOffsets: source, toOffset: destination)
 //    }
+
     
     var searchResults: [Task] {
         let taskArray = tasks.compactMap { $0 as Task}
@@ -126,43 +133,7 @@ struct TasksView: View {
             return taskArray
         }
         
-        return taskArray.filter { $0.title.contains(searchText) }
-    }
-}
-
-struct NewTaskView: View {
-    @Environment(\.managedObjectContext) private var context
-    
-    @Binding var showTempNewTask: Bool
-    
-    @State private var newTaskTitle = ""
-    var body: some View {
-        HStack {
-            TextField("New Task Name", text: $newTaskTitle)
-                .onSubmit {
-                    let newTask = Task(context: context)
-                    newTask.timestamp = Date()
-                    newTask.title = newTaskTitle
-                    
-                    showTempNewTask = false
-                    newTaskTitle = ""
-                    
-                    try? context.save()
-
-                }
-            Button(action: {
-                withAnimation(.easeInOut(duration: 0.5)) {
-                    showTempNewTask = false
-                    newTaskTitle = ""
-                }
-            }) {
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundColor(.secondary)
-            }
-        }
-        .padding()
-        .background(.thinMaterial)
-        .cornerRadius(10)
+        return taskArray.filter { $0.title.lowercased().contains(searchText.lowercased()) }
     }
 }
 
