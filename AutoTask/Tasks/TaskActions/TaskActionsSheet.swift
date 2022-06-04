@@ -49,6 +49,9 @@ struct TaskActionsSheet: View {
         let newTaskReminder = TaskAction(context: context)
         newTaskReminder.actionType = .Reminder
         newTaskReminder.order = Int32(task.taskActions.count) + 1
+        newTaskReminder.isConfirmed = false
+        newTaskReminder.identifier = UUID().uuidString
+        newTaskReminder.content = "Reminder to complete this task!"
         task.addToTaskActions_(newTaskReminder)
 
         try? context.save()
@@ -59,6 +62,9 @@ struct TaskActionsSheet: View {
         let newTaskDeadline = TaskAction(context: context)
         newTaskDeadline.actionType = .Deadline
         newTaskDeadline.order = Int32(task.taskActions.count) + 1
+        newTaskDeadline.isConfirmed = false
+        newTaskDeadline.identifier = UUID().uuidString
+        newTaskDeadline.content = "Deadline to complete this task has passed!"
         task.addToTaskActions_(newTaskDeadline)
         
         try? context.save()

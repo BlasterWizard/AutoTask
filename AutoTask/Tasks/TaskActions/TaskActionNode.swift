@@ -10,7 +10,7 @@ import SwiftUI
 struct TaskActionNode: View {
     @Environment(\.managedObjectContext) var context
     
-    var taskAction: TaskAction
+    @ObservedObject var taskAction: TaskAction
     @ObservedObject var task: Task
     
     var taskActionUI: TaskActionUI.TaskActionUIData
@@ -18,8 +18,6 @@ struct TaskActionNode: View {
     let notificationManager: NotificationManager = NotificationManager.shared
     
     @State private var dateAndTime: Date = Date()
-    @State private var confirmed = true
-    
     
     init(task: Task, taskAction: TaskAction) {
         self.taskAction = taskAction
@@ -41,7 +39,7 @@ struct TaskActionNode: View {
         VStack(spacing: 0) {
             header
             nodeBody
-            if !confirmed {
+            if !taskAction.isConfirmed {
                 doneButton
             }
         }
@@ -57,8 +55,13 @@ struct TaskActionNode: View {
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .bold()
-            Text("\(taskAction.order)")
+//            Text("\(taskAction.order)")
             Spacer()
+            if taskAction.isConfirmed {
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundColor(.green)
+                    .font(.system(size: 15))
+            }
         }
     }
     
@@ -75,8 +78,10 @@ struct TaskActionNode: View {
     
     var nodeMenu: some View {
         Menu {
+            //Delete Task Action
             Button(action: {
                 task.removeFromTaskActions_(taskAction)
+                notificationManager.deleteSpecificPendingNotifications(for: [taskAction.identifier])
                 try? context.save()
             }) {
                 HStack {
@@ -95,7 +100,7 @@ struct TaskActionNode: View {
             .onChange(of: dateAndTime) { newValue in
                 //save selected date and time to CoreData
                 withAnimation {
-                    confirmed = false
+                    taskAction.isConfirmed = false
                 }
 
                 print(newValue)
@@ -117,33 +122,11 @@ struct TaskActionNode: View {
         HStack {
             Spacer()
             Button(action: {
-                confirmed.toggle()
-                //create/schedule user notification
-                UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
-                    if success {
-                        print("All set!")
-                    } else if let error = error {
-                        print(error.localizedDescription)
-                    }
+                withAnimation {
+                    taskAction.isConfirmed.toggle()
+                    try? context.save()
                 }
-                
-                let components = dateAndTime.get(.day, .month, .year)
-                if let day = components.day, let month = components.month, let year = components.year {
-//                    notificationManager.scheduleUNTimeIntervalNotificationTrigger(title: "Test", body: "Test Body", timeInterval: 1, identifier: UUID().uuidString)
-                    let calendar = Calendar.current
-                    let hour = calendar.component(.hour, from: dateAndTime)
-                    let minute = calendar.component(.minute, from: dateAndTime)
-                    
-                    var newDateComponent = DateComponents()
-                    newDateComponent.day = day
-                    newDateComponent.month = month
-                    newDateComponent.year = year
-                    newDateComponent.hour = hour
-                    newDateComponent.minute = minute
-                    
-                    notificationManager.scheduleUNCalendarNotificationTrigger(title: task.title, body: task.content, dateComponents: newDateComponent, identifier: UUID().uuidString)
-                }
-               
+                scheduleNotificationforReminderOrDeadline()
             }) {
                 Text("Done")
                     .foregroundColor(.white)
@@ -154,6 +137,34 @@ struct TaskActionNode: View {
             .cornerRadius(10.0)
         }
         .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+    }
+    
+    private func scheduleNotificationforReminderOrDeadline() {
+        //create/schedule user notification
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
+            if success {
+                print("All set!")
+            } else if let error = error {
+                print(error.localizedDescription)
+            }
+        }
+        
+        let components = dateAndTime.get(.day, .month, .year)
+        if let day = components.day, let month = components.month, let year = components.year {
+            
+            let calendar = Calendar.current
+            let hour = calendar.component(.hour, from: dateAndTime)
+            let minute = calendar.component(.minute, from: dateAndTime)
+            
+            var newDateComponent = DateComponents()
+            newDateComponent.day = day
+            newDateComponent.month = month
+            newDateComponent.year = year
+            newDateComponent.hour = hour
+            newDateComponent.minute = minute
+          
+            notificationManager.scheduleUNCalendarNotificationTrigger(title: task.title, body: taskAction.content, dateComponents: newDateComponent, identifier: taskAction.identifier)
+        }
     }
 }
 
@@ -168,6 +179,7 @@ struct TaskActionNode_Previews: PreviewProvider {
         
         let taskActionReminder = TaskAction(context: context)
         taskActionReminder.actionType = .Reminder
+        taskActionReminder.isConfirmed = true
         
         let taskActionDeadline = TaskAction(context: context)
         taskActionDeadline.actionType = .Deadline

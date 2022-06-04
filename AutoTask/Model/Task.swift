@@ -55,6 +55,11 @@ enum TaskType: Int, CaseIterable {
 }
 
 extension TaskAction {
+    var identifier: String {
+        get { identifier_ ?? ""}
+        set { identifier_ = newValue }
+    }
+    
     var actionType: TaskType {
         get {
             TaskType(rawValue: Int(taskType)) ?? .Reminder
@@ -62,6 +67,11 @@ extension TaskAction {
         set {
             taskType = Int32(newValue.rawValue)
         }
+    }
+    
+    var content: String {
+        get { content_ ?? "" }
+        set { content_ = newValue }
     }
 }
 

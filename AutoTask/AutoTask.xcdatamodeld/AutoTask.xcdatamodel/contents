@@ -8,7 +8,7 @@
     </entity>
     <entity name="Tag" representedClassName="Tag" syncable="YES" codeGenerationType="class">
         <attribute name="name_" optional="YES" attributeType="String"/>
-        <relationship name="task" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Task" inverseName="tags_" inverseEntity="Task"/>
+        <relationship name="task" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Task" inverseName="tags_" inverseEntity="Task"/>
     </entity>
     <entity name="Task" representedClassName="Task" syncable="YES" codeGenerationType="class">
         <attribute name="content_" optional="YES" attributeType="String"/>
@@ -20,7 +20,10 @@
         <relationship name="taskActions_" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TaskAction" inverseName="task" inverseEntity="TaskAction"/>
     </entity>
     <entity name="TaskAction" representedClassName="TaskAction" syncable="YES" codeGenerationType="class">
+        <attribute name="content_" optional="YES" attributeType="String"/>
         <attribute name="dateAndTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="identifier_" optional="YES" attributeType="String"/>
+        <attribute name="isConfirmed" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="order" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="taskType" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="task" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Task" inverseName="taskActions_" inverseEntity="Task"/>
@@ -34,9 +37,9 @@
     </entity>
     <elements>
         <element name="BulletListEntry" positionX="542.68994140625" positionY="223.5123291015625" width="128" height="103"/>
-        <element name="Task" positionX="125.2634887695312" positionY="-122.5506591796875" width="128" height="148"/>
-        <element name="TaskAction" positionX="171" positionY="234" width="128" height="103"/>
+        <element name="Tag" positionX="-92.85546875" positionY="-57.21798706054688" width="128" height="73"/>
+        <element name="Task" positionX="124.2461547851562" positionY="-116.9054565429688" width="128" height="134"/>
+        <element name="TaskAction" positionX="171" positionY="234" width="128" height="148"/>
         <element name="TaskSubEntry" positionX="341.4329833984375" positionY="104.9080505371095" width="128" height="118"/>
-        <element name="Tag" positionX="-89.9111328125" positionY="-47.23849487304688" width="128" height="73"/>
     </elements>
 </model>

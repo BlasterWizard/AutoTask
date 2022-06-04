@@ -5,7 +5,7 @@
 //  Created by Justin Wong on 5/31/22.
 //
 
-import Foundation
+import SwiftUI
 
 extension Date {
     func get(_ components: Calendar.Component..., calendar: Calendar = Calendar.current) -> DateComponents {
@@ -14,5 +14,15 @@ extension Date {
 
     func get(_ component: Calendar.Component, calendar: Calendar = Calendar.current) -> Int {
         return calendar.component(component, from: self)
+    }
+}
+
+extension View {
+    //Half Sheet Modifier
+    func halfSheet<SheetView: View>(showSheet: Binding<Bool>, @ViewBuilder sheetView: @escaping () -> SheetView) -> some View {
+        return self
+            .background(
+                HalfSheetHelper(sheetView: sheetView(), showSheet: showSheet)
+            )
     }
 }

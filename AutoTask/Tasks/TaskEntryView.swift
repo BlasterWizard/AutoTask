@@ -163,8 +163,9 @@ struct TagNode: View {
     var body: some View {
         Text(tag.name)
             .padding(EdgeInsets(top: TagNodeUIConstants.topBottomPadding, leading: TagNodeUIConstants.leftRightPadding, bottom: TagNodeUIConstants.topBottomPadding, trailing: TagNodeUIConstants.leftRightPadding))
-            .background(.thinMaterial)
+            .background(Color.blue)
             .cornerRadius(TagNodeUIConstants.cornerRadius)
+            .foregroundColor(Color.white)
     }
     
     struct TagNodeUIConstants {

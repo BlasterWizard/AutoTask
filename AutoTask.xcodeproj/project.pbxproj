@@ -23,6 +23,8 @@
 		E8E328C1284735D30040602E /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E328C0284735D30040602E /* Extensions.swift */; };
 		E8E328C32848215F0040602E /* TagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E328C22848215F0040602E /* TagsView.swift */; };
 		E8E328C52848400C0040602E /* NewEntryPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E328C42848400C0040602E /* NewEntryPlaceholderView.swift */; };
+		E8E328C728495EE70040602E /* HalfSheetHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E328C628495EE70040602E /* HalfSheetHelper.swift */; };
+		E8E328CA284962BC0040602E /* TagEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E328C9284962BC0040602E /* TagEntryView.swift */; };
 		E8F3CD05284146CD009E4644 /* TaskActionNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F3CD04284146CD009E4644 /* TaskActionNode.swift */; };
 		E8F3CD082841F024009E4644 /* TaskActionsSheetNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F3CD072841F024009E4644 /* TaskActionsSheetNode.swift */; };
 		E8F3CD0D2841FACB009E4644 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F3CD0C2841FACB009E4644 /* SettingsView.swift */; };
@@ -49,6 +51,8 @@
 		E8E328C0284735D30040602E /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		E8E328C22848215F0040602E /* TagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsView.swift; sourceTree = "<group>"; };
 		E8E328C42848400C0040602E /* NewEntryPlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewEntryPlaceholderView.swift; sourceTree = "<group>"; };
+		E8E328C628495EE70040602E /* HalfSheetHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HalfSheetHelper.swift; sourceTree = "<group>"; };
+		E8E328C9284962BC0040602E /* TagEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagEntryView.swift; sourceTree = "<group>"; };
 		E8F3CD04284146CD009E4644 /* TaskActionNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskActionNode.swift; sourceTree = "<group>"; };
 		E8F3CD072841F024009E4644 /* TaskActionsSheetNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskActionsSheetNode.swift; sourceTree = "<group>"; };
 		E8F3CD0C2841FACB009E4644 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -114,8 +118,18 @@
 				E8BF1E252845975200F38917 /* BulletListEntryTextField.swift */,
 				E8BF1E272846F33000F38917 /* EditableTextField.swift */,
 				E8E328C42848400C0040602E /* NewEntryPlaceholderView.swift */,
+				E8E328C628495EE70040602E /* HalfSheetHelper.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		E8E328C8284962870040602E /* Tags */ = {
+			isa = PBXGroup;
+			children = (
+				E8E328C22848215F0040602E /* TagsView.swift */,
+				E8E328C9284962BC0040602E /* TagEntryView.swift */,
+			);
+			path = Tags;
 			sourceTree = "<group>";
 		};
 		E8F3CD0628415722009E4644 /* Model */ = {
@@ -146,9 +160,9 @@
 				E897AC73283EF8910070EF9C /* TasksView.swift */,
 				E897AC84283F05910070EF9C /* TaskEntryView.swift */,
 				E897AC8A284016E00070EF9C /* TaskSubEntryView.swift */,
-				E8F3CD092841F0B3009E4644 /* TaskActions */,
 				E8F3CD12284585A2009E4644 /* BulletListEntryView.swift */,
-				E8E328C22848215F0040602E /* TagsView.swift */,
+				E8F3CD092841F0B3009E4644 /* TaskActions */,
+				E8E328C8284962870040602E /* Tags */,
 			);
 			path = Tasks;
 			sourceTree = "<group>";
@@ -250,6 +264,8 @@
 				E897AC87283F0A370070EF9C /* Task.swift in Sources */,
 				E897AC72283EF8910070EF9C /* AutoTaskApp.swift in Sources */,
 				E8F3CD0D2841FACB009E4644 /* SettingsView.swift in Sources */,
+				E8E328C728495EE70040602E /* HalfSheetHelper.swift in Sources */,
+				E8E328CA284962BC0040602E /* TagEntryView.swift in Sources */,
 				E8BF1E262845975200F38917 /* BulletListEntryTextField.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

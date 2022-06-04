@@ -26,7 +26,7 @@ struct TagsView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 10) {
-                if tags.count > 0 {
+                if tags.count > 0 || newTag {
                     List {
                         if newTag {
                             NewEntryPlaceholderView(showTempNewEntry: $newTag, placeholderText: "New Tag Name") { newEntryValue in
@@ -34,6 +34,7 @@ struct TagsView: View {
                                 newTagEntry.name = newEntryValue
                                 try? context.save()
                             }
+                           
                         }
                         
                         ForEach(tags.sorted(by: { $0.name < $1.name }), id: \.self) { tag in
@@ -51,7 +52,7 @@ struct TagsView: View {
                 addTagButton
             }
             .padding()
-            .navigationTitle("Tags (\(tags.count))")
+            .navigationTitle("Tags")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
@@ -74,13 +75,15 @@ struct TagsView: View {
         HStack {
             Spacer()
             Button(action: {
-                newTag = true
+                print("Hello")
+                newTag.toggle()
             }) {
                 Text("Add Tag")
+                    .foregroundColor(.white)
                     .bold()
             }
             .padding(10)
-            .background(.thinMaterial)
+            .background(.green)
             .cornerRadius(10)
             Spacer()
         }
@@ -103,44 +106,6 @@ struct TagsView: View {
     }
 }
 
-struct TagEntryView: View {
-    @Environment(\.managedObjectContext) private var context
-    
-    @ObservedObject var tag: Tag
-    @ObservedObject var task: Task
-    @Binding var editModeStatus: EditMode
-
-    
-    init(tag: Tag, task: Task, editModeStatus: Binding<EditMode>) {
-        print(tag.name)
-        _tag = ObservedObject(wrappedValue: tag)
-        _task = ObservedObject(wrappedValue: task)
-        _editModeStatus = Binding(projectedValue: editModeStatus)
-    }
-    
-    var body: some View {
-        Button(action: {
-            if task.tags.contains(tag) {
-                //remove tag from tags
-                task.removeFromTags_(tag)
-            } else {
-                //add tag to tags
-                task.addToTags_(tag)
-            }
-            try? context.save()
-        }) {
-            HStack {
-//                EditableTextField(text: $newTagEntryName, isEditable: editModeStatus, task: task)
-                EditableTextField(text: $tag.name, isEditable: editModeStatus, task: task, tag: tag)
-                Spacer()
-                if task.tags.contains(tag) {
-                    Image(systemName: "checkmark")
-                }
-            }
-        }
-       
-    }
-}
 
 struct TagsView_Previews: PreviewProvider {
     static var previews: some View {
@@ -149,8 +114,8 @@ struct TagsView_Previews: PreviewProvider {
         task.title = "Wash the Dishes"
         task.content = "First clean up the table"
         task.timestamp = Date()
-        
+
         return TagsView(task: task)
-            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+                .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }

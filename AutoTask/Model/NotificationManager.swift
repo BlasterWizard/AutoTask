@@ -17,6 +17,7 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         //This assigns the delegate
         notificationCenter.delegate = self
     }
+    
     func scheduleUNCalendarNotificationTrigger(title: String, body: String, dateComponents: DateComponents, identifier: String, repeats: Bool = false){
 //        print(#function)
         let content = UNMutableNotificationContent()
@@ -32,6 +33,7 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
             }
         }
     }
+    
     func scheduleUNTimeIntervalNotificationTrigger(title: String, body: String, timeInterval: TimeInterval, identifier: String, repeats: Bool = false){
         print(#function)
         let content = UNMutableNotificationContent()
@@ -89,9 +91,13 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         }
     }
 
-    func deleteNotifications(){
+    func deleteAllPendingNotifications(){
         print(#function)
         notificationCenter.removeAllPendingNotificationRequests()
+    }
+    
+    func deleteSpecificPendingNotifications(for identifiers: [String]) {
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
     }
 
     ///Prints to console schduled notifications

@@ -41,7 +41,7 @@ struct TasksView: View {
                                     .buttonStyle(PlainButtonStyle())
                             }
 
-                            ForEach(Task.filterTasks(for: searchResults, with: showCompletedStatus), id: \.timestamp) { task in
+                            ForEach(Task.filterTasks(for: searchResults, with: showCompletedStatus), id: \.self) { task in
                                 TaskEntryView(task: task)
                                     .listRowSeparator(.hidden)
                                     .buttonStyle(PlainButtonStyle())
@@ -133,7 +133,21 @@ struct TasksView: View {
             return taskArray
         }
         
-        return taskArray.filter { $0.title.lowercased().contains(searchText.lowercased()) }
+        let directWordsSearchArray = taskArray.filter { $0.title.lowercased().contains(searchText.lowercased()) }
+        let tagsNameSearchArray = taskArray.filter {
+            isTagNameInTask(for: searchText.lowercased(), in: $0)
+        }
+        
+        return directWordsSearchArray + tagsNameSearchArray
+    }
+    
+    private func isTagNameInTask(for searchText: String, in task: Task) -> Bool {
+        for tag in task.tags {
+            if tag.name.lowercased().contains(searchText) {
+                return true
+            }
+        }
+        return false
     }
 }
 
