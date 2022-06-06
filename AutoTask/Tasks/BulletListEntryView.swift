@@ -12,31 +12,28 @@ struct BulletListEntryView: View {
     @Environment(\.colorScheme) private var colorScheme
     
     @ObservedObject var taskSubEntry: TaskSubEntry
-    var bulletListEntry: BulletListEntry
+    @ObservedObject var bulletListEntry: BulletListEntry
     var order: Int //Order starts increasing from 0 
     
     @State private var text = ""
-    @State private var isCompleted = false
     
     init (taskSubEntry: TaskSubEntry, bulletListEntry: BulletListEntry, order: Int) {
         _taskSubEntry = ObservedObject(wrappedValue: taskSubEntry)
         self.bulletListEntry = bulletListEntry
         self.order = order
-        //"load data" from Core Data
-        _isCompleted = State(wrappedValue: bulletListEntry.isCompleted)
         _text = State(wrappedValue: bulletListEntry.text ?? "")
     }
     
     var body: some View {
         HStack {
             Button(action: {
-                isCompleted.toggle()
-                bulletListEntry.isCompleted = isCompleted
+                bulletListEntry.isCompleted.toggle()
                 try? context.save()
             }) {
                 isCompletedIndicator
             }
             BulletListEntryTextField(text: $text, placeholder: "", taskSubEntry: taskSubEntry, bulletListEntry: bulletListEntry)
+                .frame(height: 30)
             Spacer()
         }
         .background(.ultraThinMaterial)
@@ -45,13 +42,13 @@ struct BulletListEntryView: View {
     
     var isCompletedIndicator: some View {
         Group {
-            if isCompleted {
+            if bulletListEntry.isCompleted {
                 Circle()
                     .fill(.blue)
                     .frame(width: BLEVConstants.circleWidthAndHeight, height: BLEVConstants.circleWidthAndHeight)
             } else {
                 Circle()
-                    .strokeBorder(.black, lineWidth: BLEVConstants.circleLineWidth)
+                    .strokeBorder(colorScheme == .dark ? .white : .black, lineWidth: BLEVConstants.circleLineWidth)
                     .frame(width: BLEVConstants.circleWidthAndHeight, height: BLEVConstants.circleWidthAndHeight)
             }
         }
@@ -60,7 +57,7 @@ struct BulletListEntryView: View {
 }
 struct BLEVConstants {
     static var completedFillColor: Color = Color(red: 166 / 255, green: 221 / 255, blue: 245 / 255).opacity(0.7)
-    static var circleWidthAndHeight: CGFloat = 10
+    static var circleWidthAndHeight: CGFloat = 15
     static var circleLineWidth: CGFloat = 1
 }
 

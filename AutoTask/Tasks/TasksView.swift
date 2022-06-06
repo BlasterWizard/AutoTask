@@ -20,65 +20,87 @@ struct TasksView: View {
     @State private var tempNewTask = false
     @State private var showCompletedStatus: CompletedTaskStatus = .Available
     @State private var searchText = ""
+    @State var isShowingAutomationView = false
+    
+    @State var taskForAutomation: Task? = nil
     
     var body: some View {
-        NavigationView {
-            VStack {
-                taskStatusPicker
+        
+        GeometryReader { geometry in
+            ZStack(alignment: .center) {
+                NavigationView {
+                    mainView
+                }
+                .zIndex(0)
                 
-                VStack {
-                    if tasks.count > 0 || tempNewTask{
-                        List {
-                            if tempNewTask {
-                                NewEntryPlaceholderView(showTempNewEntry: $tempNewTask, placeholderText: "New Task Name") { newEntryName in
-                                    let newTask = Task(context: viewContext)
-                                    newTask.timestamp = Date()
-                                    newTask.title = newEntryName
-                                    try? viewContext.save()
-                                    tempNewTask = false 
-                                }
-                                    .listRowSeparator(.hidden)
-                                    .buttonStyle(PlainButtonStyle())
-                            }
-
-                            ForEach(Task.filterTasks(for: searchResults, with: showCompletedStatus), id: \.self) { task in
-                                TaskEntryView(task: task)
-                                    .listRowSeparator(.hidden)
-                                    .buttonStyle(PlainButtonStyle())
-                            }
-                            .onDelete(perform: deleteTasks)
-//                            .onMove(perform: move)
-                            
-                        }
-                        .searchable(text: $searchText)
-                    } else {
-                        Spacer()
-                        Text("No Tasks Available")
-                        Spacer()
-                    }
+                if isShowingAutomationView{
+                    TaskAutomationView(task: taskForAutomation!, isShowingAutomationView: $isShowingAutomationView)
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                    .background(Color(UIColor.systemBackground))
+                    .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .bottom)))
+                    .zIndex(1.0)
+                    .animation(Animation.easeInOut(duration: 0.5))
                 }
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        if tasks.count > 0 {
-                            EditButton()
-                        }
-                    }
-                    ToolbarItem {
-                        if showCompletedStatus == .Available {
-                            Button(action: {
-                                withAnimation(.easeInOut(duration: 0.5)) {
-                                    tempNewTask = true
-                                }}) {
-                                Label("Add Task", systemImage: "plus")
-                            }
-                                .disabled(tempNewTask)
-                        }
-                    }
-                }
-                .navigationTitle("Tasks")
-                .listStyle(PlainListStyle())
             }
         }
+    }
+    
+    var mainView: some View {
+        VStack {
+            taskStatusPicker
+            
+            VStack {
+                if tasks.count > 0 || tempNewTask{
+                    List {
+                        if tempNewTask {
+                            NewEntryPlaceholderView(showTempNewEntry: $tempNewTask, placeholderText: "New Task Name") { newEntryName in
+                                let newTask = Task(context: viewContext)
+                                newTask.timestamp = Date()
+                                newTask.title = newEntryName
+                                try? viewContext.save()
+                                tempNewTask = false
+                            }
+                                .listRowSeparator(.hidden)
+                                .buttonStyle(PlainButtonStyle())
+                        }
+
+                        ForEach(Task.filterTasks(for: searchResults, with: showCompletedStatus), id: \.self) { task in
+                            TaskEntryView(task: task, isShowingAutomationView: $isShowingAutomationView, taskToAutomate: $taskForAutomation)
+                                .listRowSeparator(.hidden)
+                                .buttonStyle(PlainButtonStyle())
+                        }
+                        .onDelete(perform: deleteTasks)
+//                            .onMove(perform: move)
+                        
+                    }
+                    .searchable(text: $searchText)
+                } else {
+                    Spacer()
+                    Text("No Tasks Available")
+                    Spacer()
+                }
+            }
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                if tasks.count > 0 {
+                    EditButton()
+                }
+            }
+            ToolbarItem {
+                if showCompletedStatus == .Available {
+                    Button(action: {
+                        withAnimation(.easeInOut(duration: 0.5)) {
+                            tempNewTask = true
+                        }}) {
+                        Label("Add Task", systemImage: "plus")
+                    }
+                        .disabled(tempNewTask)
+                }
+            }
+        }
+        .navigationTitle("Tasks")
+        .listStyle(PlainListStyle())
     }
     
     var taskStatusPicker: some View {

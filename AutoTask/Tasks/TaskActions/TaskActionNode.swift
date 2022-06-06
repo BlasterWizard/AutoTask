@@ -13,25 +13,19 @@ struct TaskActionNode: View {
     @ObservedObject var taskAction: TaskAction
     @ObservedObject var task: Task
     
-    var taskActionUI: TaskActionUI.TaskActionUIData
+    var taskActionUI: TaskActionConditionalUI.TaskActionConditionalUIData
     
     let notificationManager: NotificationManager = NotificationManager.shared
     
-    @State private var dateAndTime: Date = Date()
+    @State private var dateAndTime: Date
     
     init(task: Task, taskAction: TaskAction) {
-        self.taskAction = taskAction
+        _taskAction = ObservedObject(wrappedValue: taskAction)
         _task = ObservedObject(wrappedValue: task)
-        _dateAndTime = State(wrappedValue: taskAction.dateAndTime ?? Date())
+        _dateAndTime = State(wrappedValue: taskAction.dateAndTime)
+        print("TaskAction DateAndTime: " + "\(taskAction.dateAndTime)")
         
-        switch taskAction.actionType {
-        case .Reminder:
-            self.taskActionUI = TaskActionUI.reminder
-        case .Deadline:
-            self.taskActionUI = TaskActionUI.deadline
-        default:
-            self.taskActionUI = TaskActionUI.placeholder
-        }
+        self.taskActionUI = TaskActionConditionalUI.returnTaskActionUI(for: taskAction.actionType)
     }
     
     
@@ -55,7 +49,6 @@ struct TaskActionNode: View {
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .bold()
-//            Text("\(taskAction.order)")
             Spacer()
             if taskAction.isConfirmed {
                 Image(systemName: "checkmark.circle.fill")
@@ -96,23 +89,10 @@ struct TaskActionNode: View {
     }
     
     var reminderAndDeadlineBody: some View {
-        DatePicker("", selection: $dateAndTime, in: Date()...)
+        DatePicker("", selection: $dateAndTime)
             .onChange(of: dateAndTime) { newValue in
-                //save selected date and time to CoreData
                 withAnimation {
                     taskAction.isConfirmed = false
-                }
-
-                print(newValue)
-                if let index = task.taskActions.firstIndex(of: taskAction) {
-                    task.taskActions[index].dateAndTime = newValue
-                    do {
-                        print("save")
-                        try context.save()
-                    } catch {
-                        print(error.localizedDescription)
-                    }
-    
                 }
             }
             .datePickerStyle(CompactDatePickerStyle())
@@ -123,7 +103,8 @@ struct TaskActionNode: View {
             Spacer()
             Button(action: {
                 withAnimation {
-                    taskAction.isConfirmed.toggle()
+                    taskAction.isConfirmed = true
+                    taskAction.dateAndTime = dateAndTime
                     try? context.save()
                 }
                 scheduleNotificationforReminderOrDeadline()
@@ -149,12 +130,12 @@ struct TaskActionNode: View {
             }
         }
         
-        let components = dateAndTime.get(.day, .month, .year)
+        let components = taskAction.dateAndTime.get(.day, .month, .year)
         if let day = components.day, let month = components.month, let year = components.year {
             
             let calendar = Calendar.current
-            let hour = calendar.component(.hour, from: dateAndTime)
-            let minute = calendar.component(.minute, from: dateAndTime)
+            let hour = calendar.component(.hour, from: taskAction.dateAndTime)
+            let minute = calendar.component(.minute, from: taskAction.dateAndTime)
             
             var newDateComponent = DateComponents()
             newDateComponent.day = day
@@ -194,33 +175,4 @@ struct TaskActionNode_Previews: PreviewProvider {
         }
     }
 }
-
-//MARK: - TaskActionUI Struct
-
-struct TaskActionUI {
-    static func returnTaskActionUI(for taskType: TaskType) -> TaskActionUI.TaskActionUIData {
-        switch (taskType) {
-        case .Reminder:
-            return reminder
-        case .Deadline:
-            return deadline
-        default:
-            break
-        }
-        return reminder
-    }
-    
-    static var reminder = TaskActionUIData(taskName: "Reminder", systemImage: "bell", backgroundColor: Color(red: 255 / 255, green: 247 / 255, blue: 161 / 255).opacity(0.7))
-    
-    static var deadline = TaskActionUIData(taskName: "Deadline", systemImage: "clock.badge.exclamationmark", backgroundColor: Color(red: 240 / 255, green: 173 / 255, blue: 183 / 255).opacity(0.7))
-    
-    static var placeholder = TaskActionUIData(taskName: "", systemImage: "", backgroundColor: .white)
-    
-    struct TaskActionUIData {
-        var taskName: String
-        var systemImage: String
-        var backgroundColor: Color
-    }
-}
-
 

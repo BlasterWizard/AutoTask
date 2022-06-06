@@ -14,61 +14,31 @@ struct TaskActionsSheet: View {
     
     @ObservedObject var task: Task
     
+    let taskActionsManager: TaskActionsManager = TaskActionsManager.shared
+    
     var body: some View {
-        NavigationView {
-            List {
-                Section("Actions") {
-                    //Reminder
-                    TaskActionsSheetNode(name: "Add Reminder", systemName: "bell", description: "Creates a scheduled reminder at specific date and time", tintColor: .yellow, type: .Reminder, select: addReminder)
-                    
-                    //Deadline
-                    TaskActionsSheetNode(name: "Add Deadline", systemName: "clock.badge.exclamationmark", description: "Specifies date and time for task to be finished", tintColor: .red, type: .Deadline, select: addDeadline)
+        List {
+            Section("Actions") {
+                //Reminder
+                TaskActionsSheetNode(name: "Add Reminder", systemName: "bell", description: "Creates a scheduled reminder at specific date and time", tintColor: .yellow, type: .Reminder) {
+                    taskActionsManager.addReminder(for: task)
+                    presentationMode.wrappedValue.dismiss()
                 }
-                Section("Control Flow") {
-                    //If
-                    TaskActionsSheetNode(name: "If Statement", systemName: "arrow.triangle.branch", description: nil, tintColor: .gray, type: .If, select: {})
-                    //And
-                    TaskActionsSheetNode(name: "And Statement", systemName: "arrow.triangle.merge", description: nil, tintColor: .gray, type: .And, select: {})
+                
+                //Deadline
+                TaskActionsSheetNode(name: "Add Deadline", systemName: "clock.badge.exclamationmark", description: "Specifies date and time for task to be finished", tintColor: .red, type: .Deadline) {
+                    taskActionsManager.addDeadline(for: task)
+                    presentationMode.wrappedValue.dismiss()
                 }
             }
-            .navigationTitle("Task Actions")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: { presentationMode.wrappedValue.dismiss() }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.secondary)
-                            .font(.system(size: 20))
-                    }
+            Section("Control Flow") {
+                TaskActionsSheetNode(name: "If Statement", systemName: "arrow.triangle.branch", description: nil, tintColor: .gray, type: .If) {
+                    taskActionsManager.addIfConditional(for: task)
+                    presentationMode.wrappedValue.dismiss()
                 }
             }
-            .listStyle(InsetGroupedListStyle())
         }
-    }
-    
-    private func addReminder() {
-        let newTaskReminder = TaskAction(context: context)
-        newTaskReminder.actionType = .Reminder
-        newTaskReminder.order = Int32(task.taskActions.count) + 1
-        newTaskReminder.isConfirmed = false
-        newTaskReminder.identifier = UUID().uuidString
-        newTaskReminder.content = "Reminder to complete this task!"
-        task.addToTaskActions_(newTaskReminder)
-
-        try? context.save()
-        presentationMode.wrappedValue.dismiss()
-    }
-    
-    private func addDeadline() {
-        let newTaskDeadline = TaskAction(context: context)
-        newTaskDeadline.actionType = .Deadline
-        newTaskDeadline.order = Int32(task.taskActions.count) + 1
-        newTaskDeadline.isConfirmed = false
-        newTaskDeadline.identifier = UUID().uuidString
-        newTaskDeadline.content = "Deadline to complete this task has passed!"
-        task.addToTaskActions_(newTaskDeadline)
-        
-        try? context.save()
-        presentationMode.wrappedValue.dismiss()
+        .listStyle(InsetGroupedListStyle())
     }
 }
 

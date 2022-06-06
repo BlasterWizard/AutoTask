@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E81ACFB5284C0DB4009E044B /* TaskAutomationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E81ACFB4284C0DB4009E044B /* TaskAutomationView.swift */; };
+		E81ACFB7284C0F3A009E044B /* CloseViewButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E81ACFB6284C0F3A009E044B /* CloseViewButton.swift */; };
+		E81ACFB9284C31FE009E044B /* TaskActionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E81ACFB8284C31FE009E044B /* TaskActionsManager.swift */; };
+		E81ACFBB284D3C44009E044B /* TaskActionConditionalUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E81ACFBA284D3C44009E044B /* TaskActionConditionalUI.swift */; };
+		E81ACFBD284D3C85009E044B /* TaskConditionalNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = E81ACFBC284D3C85009E044B /* TaskConditionalNode.swift */; };
 		E897AC72283EF8910070EF9C /* AutoTaskApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E897AC71283EF8910070EF9C /* AutoTaskApp.swift */; };
 		E897AC74283EF8910070EF9C /* TasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E897AC73283EF8910070EF9C /* TasksView.swift */; };
 		E897AC76283EF8940070EF9C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E897AC75283EF8940070EF9C /* Assets.xcassets */; };
@@ -34,6 +39,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E81ACFB4284C0DB4009E044B /* TaskAutomationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskAutomationView.swift; sourceTree = "<group>"; };
+		E81ACFB6284C0F3A009E044B /* CloseViewButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloseViewButton.swift; sourceTree = "<group>"; };
+		E81ACFB8284C31FE009E044B /* TaskActionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskActionsManager.swift; sourceTree = "<group>"; };
+		E81ACFBA284D3C44009E044B /* TaskActionConditionalUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskActionConditionalUI.swift; sourceTree = "<group>"; };
+		E81ACFBC284D3C85009E044B /* TaskConditionalNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskConditionalNode.swift; sourceTree = "<group>"; };
 		E897AC6E283EF8910070EF9C /* AutoTask.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AutoTask.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E897AC71283EF8910070EF9C /* AutoTaskApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoTaskApp.swift; sourceTree = "<group>"; };
 		E897AC73283EF8910070EF9C /* TasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksView.swift; sourceTree = "<group>"; };
@@ -72,6 +82,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E81ACFBE284D448E009E044B /* Task Automation */ = {
+			isa = PBXGroup;
+			children = (
+				E81ACFB4284C0DB4009E044B /* TaskAutomationView.swift */,
+				E81ACFBC284D3C85009E044B /* TaskConditionalNode.swift */,
+			);
+			path = "Task Automation";
+			sourceTree = "<group>";
+		};
 		E897AC65283EF8910070EF9C = {
 			isa = PBXGroup;
 			children = (
@@ -119,6 +138,8 @@
 				E8BF1E272846F33000F38917 /* EditableTextField.swift */,
 				E8E328C42848400C0040602E /* NewEntryPlaceholderView.swift */,
 				E8E328C628495EE70040602E /* HalfSheetHelper.swift */,
+				E81ACFB6284C0F3A009E044B /* CloseViewButton.swift */,
+				E81ACFBA284D3C44009E044B /* TaskActionConditionalUI.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -139,6 +160,7 @@
 				E897AC86283F0A370070EF9C /* Task.swift */,
 				E8F3CD1028429BBB009E4644 /* SettingsViewModel.swift */,
 				E8E328BE28470F520040602E /* NotificationManager.swift */,
+				E81ACFB8284C31FE009E044B /* TaskActionsManager.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -161,6 +183,7 @@
 				E897AC84283F05910070EF9C /* TaskEntryView.swift */,
 				E897AC8A284016E00070EF9C /* TaskSubEntryView.swift */,
 				E8F3CD12284585A2009E4644 /* BulletListEntryView.swift */,
+				E81ACFBE284D448E009E044B /* Task Automation */,
 				E8F3CD092841F0B3009E4644 /* TaskActions */,
 				E8E328C8284962870040602E /* Tags */,
 			);
@@ -247,16 +270,21 @@
 			files = (
 				E897AC7B283EF8940070EF9C /* Persistence.swift in Sources */,
 				E8E328C1284735D30040602E /* Extensions.swift in Sources */,
+				E81ACFB9284C31FE009E044B /* TaskActionsManager.swift in Sources */,
 				E8E328BF28470F520040602E /* NotificationManager.swift in Sources */,
 				E8BF1E282846F33000F38917 /* EditableTextField.swift in Sources */,
 				E8F3CD13284585A2009E4644 /* BulletListEntryView.swift in Sources */,
+				E81ACFB7284C0F3A009E044B /* CloseViewButton.swift in Sources */,
+				E81ACFB5284C0DB4009E044B /* TaskAutomationView.swift in Sources */,
 				E8F3CD05284146CD009E4644 /* TaskActionNode.swift in Sources */,
 				E8F3CD0F28420247009E4644 /* TaskActionDisplayIcon.swift in Sources */,
 				E897AC89283F2EB20070EF9C /* TaskActionsSheet.swift in Sources */,
 				E897AC7E283EF8940070EF9C /* AutoTask.xcdatamodeld in Sources */,
+				E81ACFBD284D3C85009E044B /* TaskConditionalNode.swift in Sources */,
 				E897AC74283EF8910070EF9C /* TasksView.swift in Sources */,
 				E897AC8B284016E00070EF9C /* TaskSubEntryView.swift in Sources */,
 				E8F3CD082841F024009E4644 /* TaskActionsSheetNode.swift in Sources */,
+				E81ACFBB284D3C44009E044B /* TaskActionConditionalUI.swift in Sources */,
 				E8F3CD1128429BBB009E4644 /* SettingsViewModel.swift in Sources */,
 				E8E328C32848215F0040602E /* TagsView.swift in Sources */,
 				E8E328C52848400C0040602E /* NewEntryPlaceholderView.swift in Sources */,

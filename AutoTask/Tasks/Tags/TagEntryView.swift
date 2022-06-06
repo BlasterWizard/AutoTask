@@ -43,7 +43,7 @@ struct TagEntryView: View {
                 }) {
                     if task.tags.contains(tag) {
                         Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.blue)
                     }
                 }
             }

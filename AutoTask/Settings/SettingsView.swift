@@ -13,7 +13,7 @@ struct SettingsView: View {
     var body: some View {
         NavigationView {
             List {
-                NavigationLink(destination: SettingsTasksView(settingsVM: settingsVM)) {
+                NavigationLink(destination: SettingsTasksView()) {
                     HStack {
                         RoundedRectangle(cornerRadius: 6)
                             .fill(.green)
@@ -33,20 +33,22 @@ struct SettingsView: View {
 }
 
 struct SettingsTasksView: View {
-    @ObservedObject var settingsVM: SettingsViewModel
+    @EnvironmentObject var settingsVM: SettingsViewModel
     
-    @State private var showTaskActionsIcons = true
-    
-    init(settingsVM: SettingsViewModel) {
-        _settingsVM = ObservedObject(wrappedValue: settingsVM)
-        _showTaskActionsIcons = State(wrappedValue: settingsVM.settings.showTaskActionDisplayIcons)
-    }
     var body: some View {
         List {
-            Toggle("Show Task Actions Icons", isOn: $showTaskActionsIcons)
-            .onChange(of: showTaskActionsIcons) { value in
+            Toggle("Show Task Actions Icons", isOn: $settingsVM.settings.showTaskActionDisplayIcons)
+                .onChange(of: settingsVM.settings.showTaskActionDisplayIcons) { value in
                 //save changes to showTasksActionsIcons to UserDefaults
                 settingsVM.updateShowTaskActionDisplayIcons(to: value)
+            }
+            NavigationLink(destination: DefaultSubEntryView()) {
+                HStack {
+                    Text("Default Task SubEntry Type")
+                    Spacer()
+                    Text(settingsVM.settings.defaultTaskSubEntryType.returnStringVersion())
+                        .foregroundColor(.secondary)
+                }
             }
         }
         .navigationTitle("Tasks")
@@ -54,8 +56,52 @@ struct SettingsTasksView: View {
     }
 }
 
+struct DefaultSubEntryView: View {
+    @EnvironmentObject var settingsVM: SettingsViewModel
+    
+    var body: some View {
+        List {
+            Section(content: {
+                Button(action: {
+                    settingsVM.updateDefaultTaskSubEntryType(to: .Text)
+                }) {
+                    HStack {
+                        Text("Text")
+                            .foregroundColor(.primary)
+                        Spacer()
+                        if settingsVM.settings.defaultTaskSubEntryType == .Text {
+                            Image(systemName: "checkmark")
+                        }
+                    }
+                }
+                Button(action: {
+                    settingsVM.updateDefaultTaskSubEntryType(to: .BulletList)
+                }) {
+                    HStack {
+                        Text("Bullet List")
+                            .foregroundColor(.primary)
+                        Spacer()
+                        if settingsVM.settings.defaultTaskSubEntryType == .BulletList {
+                            Image(systemName: "checkmark")
+                        }
+                    }
+                }
+            }, footer: {
+                Text("When creating a new Task SubEntry, select a default type")
+            })
+        }
+        .navigationTitle("Default SubEntry Type")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsView()
+        Group {
+//            SettingsView()
+//                .environmentObject(SettingsViewModel())
+            DefaultSubEntryView()
+                .environmentObject(SettingsViewModel())
+        }
     }
 }

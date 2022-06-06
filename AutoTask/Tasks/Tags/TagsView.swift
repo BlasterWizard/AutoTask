@@ -56,9 +56,7 @@ struct TagsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    if task.tags.count > 0 {
-                        EditButton()
-                    }
+                    EditButton()
          
                     Button(action: { presentationMode.wrappedValue.dismiss() }) {
                         Image(systemName: "xmark.circle.fill")

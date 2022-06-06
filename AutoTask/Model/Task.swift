@@ -36,11 +36,24 @@ extension Task {
         set { tags_ = Set(newValue) as NSSet }
     }
     
+    var taskConditionals: [TaskConditional] {
+        get { Array(taskConditionals_ as? Set<TaskConditional> ?? []) }
+        set { taskConditionals_ = Set(newValue) as NSSet }
+    }
+    
     static func filterTasks(for tasks: [Task], with filterStatus: CompletedTaskStatus) -> [Task] {
         if filterStatus == .Completed {
             return tasks.filter { $0.isCompleted == true}
         }
         return tasks.filter { $0.isCompleted == false }
+    }
+    
+    func getTaskAction(for identifier: String) -> TaskAction? {
+        let availableTaskActions = taskActions.filter { $0.identifier == identifier }
+        if availableTaskActions.isEmpty {
+            return nil
+        }
+        return availableTaskActions.first!
     }
 }
 
@@ -51,13 +64,33 @@ enum TaskType: Int, CaseIterable {
     case DeleteTask = 2
     case Deadline = 3
     case If = 4
-    case And = 5
+    case None = 5
+    
+    func returnStringName() -> String {
+        switch self {
+        case .Reminder:
+            return "Reminder"
+        case .AddTask:
+            return "Add Task"
+        case .DeleteTask:
+            return "Delete Task"
+        case .Deadline:
+            return "Deadline"
+        default:
+            return ""
+        }
+    }
 }
 
 extension TaskAction {
     var identifier: String {
         get { identifier_ ?? ""}
         set { identifier_ = newValue }
+    }
+    
+    var nickName: String {
+        get { nickName_ ?? "" }
+        set { nickName_ = newValue }
     }
     
     var actionType: TaskType {
@@ -67,6 +100,11 @@ extension TaskAction {
         set {
             taskType = Int32(newValue.rawValue)
         }
+    }
+    
+    var dateAndTime: Date {
+        get { dateAndTime_ ?? Date() }
+        set { dateAndTime_ = newValue }
     }
     
     var content: String {
@@ -83,9 +121,17 @@ enum CompletedTaskStatus: String, CaseIterable, Identifiable {
 }
 
 //MARK: - TaskSubEntry
-enum SubTaskType: Int {
+enum SubTaskType: Int, CaseIterable {
     case Text = 0
     case BulletList = 1
+    
+    func returnStringVersion() -> String {
+        switch self.rawValue {
+        case 0: return "Text"
+        case 1: return "Bullet List"
+        default: return ""
+        }
+    }
 }
 
 extension TaskSubEntry {
@@ -114,6 +160,66 @@ extension Tag {
     
     static var placeholder: Tag {
         Tag()
+    }
+}
+
+enum TaskConditionals: Int {
+    case If = 0
+    case Repeat = 1
+}
+
+enum TAConditions: Int {
+    case hasTriggered = 0
+    case notTriggered = 1
+    case hasMet = 2
+    case notMet = 3
+    case none = 4
+    
+    func returnConditions(for actionType: TaskType) -> [TAConditions] {
+        switch actionType {
+        case .Reminder:
+            return [.hasTriggered, .notTriggered]
+        case .AddTask:
+            return []
+        case .DeleteTask:
+            return []
+        case .Deadline:
+            return [.hasMet, .notMet]
+        default:
+            return []
+        }
+    }
+    
+    func returnStringName() -> String {
+        switch self {
+        case .hasTriggered:
+            return "Has Triggered"
+        case .notTriggered:
+            return "Not Triggered"
+        case .hasMet:
+            return "Has Met"
+        case .notMet:
+            return "Not Met"
+        case .none:
+            return "None"
+        }
+    }
+}
+
+extension TaskConditional {
+    var conditionalType: TaskType {
+        get { TaskType(rawValue: Int(conditionalType_)) ?? .If}
+        set { conditionalType_ = Int32(newValue.rawValue) }
+    }
+    
+    var identifier: String {
+        get { identifier_ ?? "" }
+        set { identifier_ = newValue }
+    }
+    
+    var status: TAConditions {
+        get { TAConditions(rawValue: Int(status_)) ?? .none}
+        set { status_ = Int32(newValue.rawValue) }
     }
 }
 

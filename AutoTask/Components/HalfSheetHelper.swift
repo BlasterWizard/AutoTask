@@ -36,6 +36,7 @@ class CustomHostingController<Content: View>: UIHostingController<Content> {
         //setting presentation controller properties
         if let presentationController = presentationController as? UISheetPresentationController {
             presentationController.detents = [.medium(), .large()]
+            presentationController.selectedDetentIdentifier = .medium
             presentationController.prefersGrabberVisible = true
         }
     }

@@ -15,6 +15,9 @@ struct TaskEntryView: View {
     @Environment(\.colorScheme) private var colorScheme
     
     @ObservedObject var task: Task
+    @Binding var isShowingAutomationView: Bool
+    @Binding var taskToAutomate: Task?
+    
     @State private var isTaskExpanded = false
     @State private var showTaskActionsCM = false
     @State private var showTagsView = false
@@ -89,17 +92,7 @@ struct TaskEntryView: View {
     
     var addSubEntryButton: some View {
         Button(action: {
-            let newTaskSubEntry = TaskSubEntry(context: context)
-            newTaskSubEntry.typeStatus = .Text
-            newTaskSubEntry.order = Int32(task.subEntries.count)
-            task.addToSubEntries_(newTaskSubEntry)
-            
-            do {
-                try context.save()
-            } catch {
-                print(error.localizedDescription)
-            }
-
+           createNewTaskSubEntry()
         }) {
             HStack {
                 Image(systemName: "plus.circle.fill")
@@ -112,19 +105,24 @@ struct TaskEntryView: View {
     
     var expandedTaskView: some View {
         VStack {
-            ForEach(task.taskActions.sorted(by: { $0.order < $1.order } ), id: \.self) { taskAction in
-                TaskActionNode(task: task, taskAction: taskAction)
-            }
             taskTagsView
             HStack {
                 Spacer()
+                //show Tags View Button
                 Button(action: {
                     //Add tag to task - > bring up sheet
                     showTagsView.toggle()
                 }) {
                    Image(systemName: "tag")
                 }
-                addTaskActionsButton
+                
+                //show Automation View
+                Button(action: {
+                    isShowingAutomationView.toggle()
+                    taskToAutomate = task
+                }) {
+                    Image(systemName: "curlybraces")
+                }
             }
             .padding(EdgeInsets(top: 10, leading: 0, bottom: 0, trailing: 0))
         }
@@ -139,19 +137,23 @@ struct TaskEntryView: View {
         }
     }
     
-    var addTaskActionsButton: some View {
-        Button(action: {
-            showTaskActionsCM.toggle()
-        }) {
-           Text("Add Task Action")
-                .foregroundColor(.white)
-                .bold()
+    private func createNewTaskSubEntry() {
+        let newTaskSubEntry = TaskSubEntry(context: context)
+        if settingsVM.settings.defaultTaskSubEntryType == .Text {
+            newTaskSubEntry.typeStatus =  .Text
+        } else {
+            newTaskSubEntry.typeStatus =  .BulletList
+            let newBulletListEntry = BulletListEntry(context: context)
+            newTaskSubEntry.addToBulletListEntries_(newBulletListEntry)
         }
-        .padding(5)
-        .background(.green)
-        .cornerRadius(5.0)
-        .sheet(isPresented: $showTaskActionsCM) {
-            TaskActionsSheet(task: task)
+       
+        newTaskSubEntry.order = Int32(task.subEntries.count)
+        task.addToSubEntries_(newTaskSubEntry)
+        
+        do {
+            try context.save()
+        } catch {
+            print(error.localizedDescription)
         }
     }
 }
@@ -191,11 +193,11 @@ struct TaskView_Previews: PreviewProvider {
         tag.name = "School"
         
         return Group {
-            TaskEntryView(task: task)
-                .environment(\.managedObjectContext, context)
-                .padding()
-                .previewLayout(.sizeThatFits)
-                .environmentObject(SettingsViewModel())
+//            TaskEntryView(task: task, isShowingAutomationView: .constant(false))
+//                .environment(\.managedObjectContext, context)
+//                .padding()
+//                .previewLayout(.sizeThatFits)
+//                .environmentObject(SettingsViewModel())
             TaskActionNode(task: task, taskAction: taskAction)
                 .padding()
                 .previewLayout(.sizeThatFits)

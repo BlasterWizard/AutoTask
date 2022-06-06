@@ -18,15 +18,24 @@
         <relationship name="subEntries_" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TaskSubEntry" inverseName="task" inverseEntity="TaskSubEntry"/>
         <relationship name="tags_" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="task" inverseEntity="Tag"/>
         <relationship name="taskActions_" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TaskAction" inverseName="task" inverseEntity="TaskAction"/>
+        <relationship name="taskConditionals_" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TaskConditional" inverseName="task" inverseEntity="TaskConditional"/>
     </entity>
     <entity name="TaskAction" representedClassName="TaskAction" syncable="YES" codeGenerationType="class">
         <attribute name="content_" optional="YES" attributeType="String"/>
-        <attribute name="dateAndTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="dateAndTime_" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="identifier_" optional="YES" attributeType="String"/>
         <attribute name="isConfirmed" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="nickName_" optional="YES" attributeType="String"/>
         <attribute name="order" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="taskType" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="task" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Task" inverseName="taskActions_" inverseEntity="Task"/>
+    </entity>
+    <entity name="TaskConditional" representedClassName="TaskConditional" syncable="YES" codeGenerationType="class">
+        <attribute name="conditionalType_" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="identifier_" optional="YES" attributeType="String"/>
+        <attribute name="order" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="status_" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="task" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Task" inverseName="taskConditionals_" inverseEntity="Task"/>
     </entity>
     <entity name="TaskSubEntry" representedClassName="TaskSubEntry" syncable="YES" codeGenerationType="class">
         <attribute name="order" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
@@ -38,8 +47,9 @@
     <elements>
         <element name="BulletListEntry" positionX="542.68994140625" positionY="223.5123291015625" width="128" height="103"/>
         <element name="Tag" positionX="-92.85546875" positionY="-57.21798706054688" width="128" height="73"/>
-        <element name="Task" positionX="124.2461547851562" positionY="-116.9054565429688" width="128" height="134"/>
-        <element name="TaskAction" positionX="171" positionY="234" width="128" height="148"/>
+        <element name="Task" positionX="124.2461547851562" positionY="-116.9054565429688" width="128" height="163"/>
+        <element name="TaskAction" positionX="89.339111328125" positionY="203.8348388671875" width="128" height="163"/>
+        <element name="TaskConditional" positionX="410.94482421875" positionY="-91.02578735351562" width="128" height="118"/>
         <element name="TaskSubEntry" positionX="341.4329833984375" positionY="104.9080505371095" width="128" height="118"/>
     </elements>
 </model>

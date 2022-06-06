@@ -30,7 +30,7 @@ struct TaskActionDisplayIcon: View {
     var taskType: TaskType
     
     var body: some View {
-        Image(systemName: TaskActionUI.returnTaskActionUI(for: taskType).systemImage)
+        Image(systemName: TaskActionConditionalUI.returnTaskActionUI(for: taskType).systemImage)
         Circle()
             .fill(.ultraThinMaterial)
             .overlay(
