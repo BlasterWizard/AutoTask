@@ -14,7 +14,8 @@ struct TaskActionsSheetNode: View {
     var systemName: String
     var description: String?
     var tintColor: Color
-    var type: TaskType
+    var actionType: TaskType?
+    var conditionalType: TaskConditionals?
     
     var select: () -> Void
     
@@ -23,15 +24,15 @@ struct TaskActionsSheetNode: View {
             self.select()
             presentationMode.wrappedValue.dismiss()
         }) {
-            if type == .Reminder || type == .Deadline {
-                actionType
+            if actionType != nil {
+                actionTypeNode
             } else {
-                controlFlowType
+                controlFlowTypeNode
             }
         }
     }
     
-    var actionType: some View {
+    var actionTypeNode: some View {
         VStack(alignment: .leading) {
             HStack {
                 Text(name)
@@ -46,7 +47,7 @@ struct TaskActionsSheetNode: View {
         }
     }
     
-    var controlFlowType: some View {
+    var controlFlowTypeNode: some View {
         HStack {
             RoundedRectangle(cornerRadius: 5)
                 .fill(.gray)
@@ -67,10 +68,9 @@ struct TaskActionsSheetNode_Previews: PreviewProvider {
         let context = PersistenceController.preview.container.viewContext
         let task = Task(context: context)
         task.title = "Wash the Dishes"
-        task.content = "First clean up the table"
         task.timestamp = Date()
         
-        return TaskActionsSheetNode(name: "If Statement", systemName: "arrow.triangle.branch", description: nil, tintColor: .secondary, type: .If, select: {})
+        return TaskActionsSheetNode(name: "If Statement", systemName: "arrow.triangle.branch", description: nil, tintColor: .secondary, conditionalType: .If, select: {})
             .padding()
             .previewLayout(.sizeThatFits)
     }

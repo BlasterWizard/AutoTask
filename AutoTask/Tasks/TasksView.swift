@@ -54,11 +54,8 @@ struct TasksView: View {
                     List {
                         if tempNewTask {
                             NewEntryPlaceholderView(showTempNewEntry: $tempNewTask, placeholderText: "New Task Name") { newEntryName in
-                                let newTask = Task(context: viewContext)
-                                newTask.timestamp = Date()
-                                newTask.title = newEntryName
+                                TaskActionsManager.shared.addTask(withTitle: newEntryName)
                                 try? viewContext.save()
-                                tempNewTask = false
                             }
                                 .listRowSeparator(.hidden)
                                 .buttonStyle(PlainButtonStyle())
@@ -70,7 +67,6 @@ struct TasksView: View {
                                 .buttonStyle(PlainButtonStyle())
                         }
                         .onDelete(perform: deleteTasks)
-//                            .onMove(perform: move)
                         
                     }
                     .searchable(text: $searchText)
@@ -112,22 +108,6 @@ struct TasksView: View {
         .padding()
     }
 
-    private func addTask() {
-        withAnimation {
-            let newTask = Task(context: viewContext)
-            newTask.timestamp = Date()
-            
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
-    }
-
     private func deleteTasks(offsets: IndexSet) {
         withAnimation {
             offsets.map { tasks[$0] }.forEach(viewContext.delete)
@@ -142,11 +122,6 @@ struct TasksView: View {
             }
         }
     }
-    
-//    private func move(from source: IndexSet, to destination: Int) {
-//        Task.filterTasks(for: tasks, with: showCompletedStatus).move(fromOffsets: source, toOffset: destination)
-//    }
-
     
     var searchResults: [Task] {
         let taskArray = tasks.compactMap { $0 as Task}

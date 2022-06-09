@@ -15,13 +15,7 @@ struct SettingsView: View {
             List {
                 NavigationLink(destination: SettingsTasksView()) {
                     HStack {
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(.green)
-                            .frame(width: 30, height: 30)
-                            .overlay(
-                                Image(systemName: "checklist")
-                                .foregroundColor(.white)
-                            )
+                        RoundedRectIcon(backgroundColor: .green, systemImage: "checklist", imageColor: .white)
                         Text("Tasks")
                     }
                 }

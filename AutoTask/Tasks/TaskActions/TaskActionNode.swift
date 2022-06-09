@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftEntryKit
 
 struct TaskActionNode: View {
     @Environment(\.managedObjectContext) var context
@@ -18,6 +19,7 @@ struct TaskActionNode: View {
     let notificationManager: NotificationManager = NotificationManager.shared
     
     @State private var dateAndTime: Date
+    @State private var showDoneButton = false
     
     init(task: Task, taskAction: TaskAction) {
         _taskAction = ObservedObject(wrappedValue: taskAction)
@@ -33,7 +35,7 @@ struct TaskActionNode: View {
         VStack(spacing: 0) {
             header
             nodeBody
-            if !taskAction.isConfirmed {
+            if showDoneButton {
                 doneButton
             }
         }
@@ -45,7 +47,7 @@ struct TaskActionNode: View {
     var header: some View {
         HStack {
             Image(systemName: taskActionUI.systemImage)
-            Text(taskActionUI.taskName)
+            Text(taskAction.nickName == "" ? taskActionUI.taskName : taskAction.nickName)
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .bold()
@@ -72,14 +74,41 @@ struct TaskActionNode: View {
     var nodeMenu: some View {
         Menu {
             //Delete Task Action
-            Button(action: {
+            Button(role: .destructive, action: {
                 task.removeFromTaskActions_(taskAction)
                 notificationManager.deleteSpecificPendingNotifications(for: [taskAction.identifier])
                 try? context.save()
-            }) {
+            }, label: {
                 HStack {
                     Image(systemName: "trash")
                     Text("Delete")
+                }
+            })
+            
+            Button(action: {
+                //allow user to assign nickname to Task Action
+                var attributes = EKAttributes()
+                attributes.name = "Hello"
+                attributes.windowLevel = .normal
+                attributes.position = .center
+                attributes.displayDuration = .infinity
+                attributes.entryBackground = .color(color: .standardContent)
+                attributes.screenBackground = .color(color: EKColor(UIColor(white: 0.5, alpha: 0.5)))
+                attributes.roundCorners = .all(radius: 20)
+                attributes.entryInteraction = .absorbTouches
+                
+                SwiftEntryKit.display(entry:
+                    UIHostingController(rootView: TaskActionEditNicknameOverlay(taskAction: taskAction)), using: attributes)
+            }) {
+                HStack {
+                    VStack {
+                        Text("Set Nickname")
+                        Text("hello")
+                        Text(taskAction.nickName)
+                            .foregroundColor(.secondary)
+                    }
+                    Image(systemName: "lanyardcard")
+   
                 }
             }
         } label: {
@@ -92,10 +121,11 @@ struct TaskActionNode: View {
         DatePicker("", selection: $dateAndTime)
             .onChange(of: dateAndTime) { newValue in
                 withAnimation {
-                    taskAction.isConfirmed = false
+                    showDoneButton = true
                 }
             }
             .datePickerStyle(CompactDatePickerStyle())
+            .disabled(taskAction.isConfirmed)
     }
     
     var doneButton: some View {
@@ -103,11 +133,11 @@ struct TaskActionNode: View {
             Spacer()
             Button(action: {
                 withAnimation {
-                    taskAction.isConfirmed = true
+                    showDoneButton = false
                     taskAction.dateAndTime = dateAndTime
                     try? context.save()
                 }
-                scheduleNotificationforReminderOrDeadline()
+                notificationManager.scheduleNotificationforReminderOrDeadline(for: taskAction, in: task)
             }) {
                 Text("Done")
                     .foregroundColor(.white)
@@ -119,33 +149,57 @@ struct TaskActionNode: View {
         }
         .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
     }
+}
+
+struct TaskActionEditNicknameOverlay: View {
+    @ObservedObject var taskAction: TaskAction
     
-    private func scheduleNotificationforReminderOrDeadline() {
-        //create/schedule user notification
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
-            if success {
-                print("All set!")
-            } else if let error = error {
+    var body: some View {
+        VStack {
+            Text("Edit Task Action Nickname")
+                .bold()
+            TextField("New Nickname", text: $taskAction.nickName)
+                .textFieldStyle(.roundedBorder)
+            HStack {
+                Spacer()
+                closeButton
+                Spacer()
+                saveButton
+                Spacer()
+            }
+           
+        }
+        .padding()
+    }
+    
+    var closeButton: some View {
+        Button(action: {
+            SwiftEntryKit.dismiss(.displayed)
+        }) {
+            Text("Close")
+                .foregroundColor(.white)
+        }
+        .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
+        .background(.red)
+        .cornerRadius(10)
+    }
+    
+    var saveButton: some View {
+        Button(action: {
+            SwiftEntryKit.dismiss(.displayed)
+            do {
+                try PersistenceController.shared.container.viewContext.save()
+            } catch {
                 print(error.localizedDescription)
             }
+
+        }) {
+            Text("Save")
+                .foregroundColor(.white)
         }
-        
-        let components = taskAction.dateAndTime.get(.day, .month, .year)
-        if let day = components.day, let month = components.month, let year = components.year {
-            
-            let calendar = Calendar.current
-            let hour = calendar.component(.hour, from: taskAction.dateAndTime)
-            let minute = calendar.component(.minute, from: taskAction.dateAndTime)
-            
-            var newDateComponent = DateComponents()
-            newDateComponent.day = day
-            newDateComponent.month = month
-            newDateComponent.year = year
-            newDateComponent.hour = hour
-            newDateComponent.minute = minute
-          
-            notificationManager.scheduleUNCalendarNotificationTrigger(title: task.title, body: taskAction.content, dateComponents: newDateComponent, identifier: taskAction.identifier)
-        }
+        .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
+        .background(.blue)
+        .cornerRadius(10)
     }
 }
 
@@ -155,7 +209,6 @@ struct TaskActionNode_Previews: PreviewProvider {
         let context = PersistenceController.preview.container.viewContext
         let task = Task(context: context)
         task.title = "Wash the Dishes"
-        task.content = "First clean up the table"
         task.timestamp = Date()
         
         let taskActionReminder = TaskAction(context: context)
@@ -167,12 +220,14 @@ struct TaskActionNode_Previews: PreviewProvider {
 
         return Group {
             TaskActionNode(task: task, taskAction: taskActionReminder)
-            .padding()
-            .previewLayout(.sizeThatFits)
+                .previewDisplayName("Reminder")
             TaskActionNode(task: task, taskAction: taskActionDeadline)
-            .padding()
-            .previewLayout(.sizeThatFits)
+                .previewDisplayName("Deadline")
+            TaskActionEditNicknameOverlay(taskAction: taskActionReminder)
+                .previewDisplayName("TaskActionEditNicknameOverlay")
         }
+        .padding()
+        .previewLayout(.sizeThatFits)
     }
 }
 

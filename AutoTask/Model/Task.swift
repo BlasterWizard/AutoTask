@@ -16,11 +16,6 @@ extension Task {
         set { title_ = newValue }
     }
     
-    var content: String {
-        get { content_ ?? "" }
-        set { content_ = newValue }
-    }
-    
     var taskActions: [TaskAction] {
         get { Array(taskActions_ as? Set<TaskAction> ?? []) }
         set { taskActions_ = Set(newValue) as NSSet }
@@ -63,7 +58,6 @@ enum TaskType: Int, CaseIterable {
     case AddTask = 1
     case DeleteTask = 2
     case Deadline = 3
-    case If = 4
     case None = 5
     
     func returnStringName() -> String {
@@ -95,7 +89,7 @@ extension TaskAction {
     
     var actionType: TaskType {
         get {
-            TaskType(rawValue: Int(taskType)) ?? .Reminder
+            TaskType(rawValue: Int(taskType)) ?? .None
         }
         set {
             taskType = Int32(newValue.rawValue)
@@ -166,6 +160,7 @@ extension Tag {
 enum TaskConditionals: Int {
     case If = 0
     case Repeat = 1
+    case None = 2
 }
 
 enum TAConditions: Int {
@@ -185,8 +180,8 @@ enum TAConditions: Int {
             return []
         case .Deadline:
             return [.hasMet, .notMet]
-        default:
-            return []
+        case .None:
+            return [.none]
         }
     }
     
@@ -207,8 +202,8 @@ enum TAConditions: Int {
 }
 
 extension TaskConditional {
-    var conditionalType: TaskType {
-        get { TaskType(rawValue: Int(conditionalType_)) ?? .If}
+    var conditionalType: TaskConditionals {
+        get { TaskConditionals(rawValue: Int(conditionalType_)) ?? .None}
         set { conditionalType_ = Int32(newValue.rawValue) }
     }
     

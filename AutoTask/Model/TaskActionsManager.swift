@@ -16,7 +16,8 @@ class TaskActionsManager {
         newTaskReminder.order = Int32(task.taskActions.count) + 1
         newTaskReminder.isConfirmed = false
         newTaskReminder.identifier = UUID().uuidString
-        newTaskReminder.content = "Reminder to complete this task!"
+        //TODO: Integrate with App Settings to assign default notification body
+        newTaskReminder.content = "Don't forget to complete this task!"
         newTaskReminder.nickName = "Reminder \(Int32(newTaskReminder.order))"
         task.addToTaskActions_(newTaskReminder)
 
@@ -32,6 +33,28 @@ class TaskActionsManager {
         newTaskDeadline.content = "Deadline to complete this task has passed!"
         newTaskDeadline.nickName = "Deadline \(Int32(newTaskDeadline.order))"
         task.addToTaskActions_(newTaskDeadline)
+        
+        try? PersistenceController.shared.container.viewContext.save()
+    }
+    
+    func addTask(withTitle title: String) {
+        let newTask = Task(context: PersistenceController.shared.container.viewContext)
+        newTask.isCompleted = false
+        newTask.title = title 
+        newTask.timestamp = Date()
+        
+        try? PersistenceController.shared.container.viewContext.save()
+    }
+    
+    func scheduleTask(for task: Task) {
+        let newScheduledTask = TaskAction(context: task.managedObjectContext!)
+        newScheduledTask.actionType = .AddTask
+        newScheduledTask.order = Int32(task.taskActions.count) + 1
+        newScheduledTask.isConfirmed = false
+        newScheduledTask.identifier = UUID().uuidString
+        newScheduledTask.content = "Added New Task!"
+        newScheduledTask.nickName = "Deadline \(Int32(newScheduledTask.order))"
+        task.addToTaskActions_(newScheduledTask)
         
         try? PersistenceController.shared.container.viewContext.save()
     }

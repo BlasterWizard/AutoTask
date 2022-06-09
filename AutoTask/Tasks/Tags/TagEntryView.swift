@@ -42,7 +42,7 @@ struct TagEntryView: View {
                     print(task.tags.count)
                 }) {
                     if task.tags.contains(tag) {
-                        Image(systemName: "checkmark.circle.fill")
+                        Image(systemName: "checkmark")
                             .foregroundColor(.blue)
                     }
                 }
@@ -56,7 +56,7 @@ struct TagEntryView_Previews: PreviewProvider {
         let context = PersistenceController.preview.container.viewContext
         let task = Task(context: context)
         task.title = "Wash the Dishes"
-        task.content = "First clean up the table"
+
         task.timestamp = Date()
         
         let tag = Tag(context: context)

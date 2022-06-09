@@ -19,6 +19,7 @@ struct NewEntryPlaceholderView: View {
             TextField(placeholderText, text: $newEntryNameState)
                 .onSubmit {
                     submitFunction(newEntryNameState)
+                    showTempNewEntry.toggle()
                     newEntryNameState = ""
                 }
             Button(action: {

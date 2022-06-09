@@ -6,6 +6,7 @@
 //
 
 import UserNotifications
+import CoreData
 
 class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     //Singleton is requierd because of delegate
@@ -18,11 +19,42 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         notificationCenter.delegate = self
     }
     
-    func scheduleUNCalendarNotificationTrigger(title: String, body: String, dateComponents: DateComponents, identifier: String, repeats: Bool = false){
+    func scheduleNotificationforReminderOrDeadline(for taskAction: TaskAction, in task: Task) {
+        //create/schedule user notification
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
+            if success {
+                print("All set!")
+            } else if let error = error {
+                print(error.localizedDescription)
+            }
+        }
+        
+        //clear previous pending notification if there is one
+        deleteSpecificPendingNotifications(for: [taskAction.identifier])
+        
+        let components = taskAction.dateAndTime.get(.day, .month, .year)
+        if let day = components.day, let month = components.month, let year = components.year {
+            
+            let calendar = Calendar.current
+            let hour = calendar.component(.hour, from: taskAction.dateAndTime)
+            let minute = calendar.component(.minute, from: taskAction.dateAndTime)
+            
+            var newDateComponent = DateComponents()
+            newDateComponent.day = day
+            newDateComponent.month = month
+            newDateComponent.year = year
+            newDateComponent.hour = hour
+            newDateComponent.minute = minute
+          
+            scheduleUNCalendarNotificationTrigger(title: task.title, body: taskAction.content, dateComponents: newDateComponent, identifier: taskAction.identifier)
+        }
+    }
+    
+    private func scheduleUNCalendarNotificationTrigger(title: String, body: String, dateComponents: DateComponents, identifier: String, repeats: Bool = false){
 //        print(#function)
         let content = UNMutableNotificationContent()
         content.title = title
-        content.subtitle = body
+        content.body = body
         content.sound = .default
         
         let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: repeats)
@@ -127,9 +159,23 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
             }
         }
     }
+    
     //MARK: UNUserNotificationCenterDelegate
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        
+        //fetch all Task Actions
+        let taskActionsFetchRequest: NSFetchRequest<TaskAction> = TaskAction.fetchRequest()
+        taskActionsFetchRequest.predicate = NSPredicate(format: "identifier_ == %@", notification.request.identifier)
+        let context = PersistenceController.shared.container.viewContext
+        do {
+            let objects = try context.fetch(taskActionsFetchRequest)
+            if let firstTaskAction = objects.first {
+                firstTaskAction.isConfirmed = true
+                try? PersistenceController.shared.container.viewContext.save()
+            }
+            print(objects)
+        } catch {
+            print(error.localizedDescription)
+        }
         completionHandler(.banner)
     }
 }

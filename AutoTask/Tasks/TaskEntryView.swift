@@ -183,7 +183,6 @@ struct TaskView_Previews: PreviewProvider {
         let context = PersistenceController.preview.container.viewContext
         let task = Task(context: context)
         task.title = "Wash the Dishes"
-        task.content = "First clean up the table"
         task.timestamp = Date()
         
         let taskAction = TaskAction(context: context)

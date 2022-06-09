@@ -49,9 +49,6 @@ struct TaskSubEntryView: View {
         .padding(5)
         .background(.ultraThinMaterial)
         .cornerRadius(5)
-        .onDrag {
-            NSItemProvider(object: taskSubEntry as! NSItemProviderWriting)
-        }
     }
     
     var editButton: some View {

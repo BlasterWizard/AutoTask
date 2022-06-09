@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21223.11" systemVersion="21F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
     <entity name="BulletListEntry" representedClassName="BulletListEntry" syncable="YES" codeGenerationType="class">
         <attribute name="isCompleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="order" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
@@ -11,7 +11,6 @@
         <relationship name="task" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Task" inverseName="tags_" inverseEntity="Task"/>
     </entity>
     <entity name="Task" representedClassName="Task" syncable="YES" codeGenerationType="class">
-        <attribute name="content_" optional="YES" attributeType="String"/>
         <attribute name="isCompleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="title_" optional="YES" attributeType="String"/>
@@ -47,9 +46,9 @@
     <elements>
         <element name="BulletListEntry" positionX="542.68994140625" positionY="223.5123291015625" width="128" height="103"/>
         <element name="Tag" positionX="-92.85546875" positionY="-57.21798706054688" width="128" height="73"/>
-        <element name="Task" positionX="124.2461547851562" positionY="-116.9054565429688" width="128" height="163"/>
-        <element name="TaskAction" positionX="89.339111328125" positionY="203.8348388671875" width="128" height="163"/>
-        <element name="TaskConditional" positionX="410.94482421875" positionY="-91.02578735351562" width="128" height="118"/>
+        <element name="Task" positionX="145.0005493164062" positionY="-225.6603088378907" width="128" height="134"/>
+        <element name="TaskAction" positionX="89.339111328125" positionY="203.8348388671875" width="128" height="149"/>
+        <element name="TaskConditional" positionX="408.174560546875" positionY="-106.7437744140625" width="128" height="118"/>
         <element name="TaskSubEntry" positionX="341.4329833984375" positionY="104.9080505371095" width="128" height="118"/>
     </elements>
 </model>
